@@ -1,0 +1,55 @@
+import {useEffect, useRef, useState} from 'react';
+import {BookOpen, Check, X} from 'lucide-react';
+import type {LessonContent} from './lessonContent';
+import './lesson.css';
+
+export function Lesson({content, onClose}: {content: LessonContent; onClose: () => void}) {
+  const [step, setStep] = useState(0);
+  const [answer, setAnswer] = useState<string | null>(null);
+  const [correct, setCorrect] = useState(0);
+  const panel = useRef<HTMLElement>(null);
+  const heading = useRef<HTMLHeadingElement>(null);
+  const complete = step === content.exercises.length;
+  const exercise = content.exercises[step];
+  useEffect(() => {
+    const previous = document.activeElement as HTMLElement | null;
+    const oldOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    panel.current?.querySelector<HTMLButtonElement>('button')?.focus();
+    return () => {document.body.style.overflow = oldOverflow; previous?.focus();};
+  }, []);
+  useEffect(() => {if (step > 0) heading.current?.focus();}, [step]);
+  return <div className="backdrop" onKeyDown={event => {
+    if (event.key === 'Escape') {event.stopPropagation(); onClose();}
+    if (event.key === 'Tab') {
+      const buttons = Array.from(panel.current?.querySelectorAll<HTMLButtonElement>('button:not(:disabled)') ?? []);
+      const first = buttons[0], last = buttons[buttons.length - 1];
+      if (event.shiftKey && document.activeElement === first) {event.preventDefault(); last?.focus();}
+      else if (!event.shiftKey && document.activeElement === last) {event.preventDefault(); first?.focus();}
+    }
+  }}><section ref={panel} className="modal lesson-player" role="dialog" aria-modal="true" aria-labelledby="lesson-title">
+    <button className="icon close" onClick={onClose} aria-label="Close lesson"><X/></button>
+    <BookOpen aria-hidden="true"/><span className="eyebrow">Yorùbá · Unit 1</span>
+    <h2 id="lesson-title">{content.title}</h2>
+    {complete ? <>
+      <h3 ref={heading} tabIndex={-1}>Lesson complete!</h3>
+      <p>You practised welcoming a guest and greeting someone in the morning and afternoon.</p>
+      <p>{correct} of {content.exercises.length} correct on your first choice. Keep practising!</p>
+      <p className="lesson-note">This practice session is not saved yet.</p>
+      <button className="primary" onClick={onClose}>Back to my journey</button>
+    </> : <>
+      {step === 0 && <p>{content.introduction}</p>}
+      <div className="lesson-counter">Exercise {step + 1} of {content.exercises.length}</div>
+      <h3 ref={heading} tabIndex={-1}>{exercise.prompt}</h3>
+      <div className="lesson-options">{exercise.options.map(option => <button key={option} disabled={answer !== null} className={`lesson-option ${answer === option ? 'chosen' : ''}`} onClick={() => {
+        setAnswer(option); if (option === exercise.answer) setCorrect(value => value + 1);
+      }}>{option}</button>)}</div>
+      {answer !== null && <div className="lesson-feedback" role="status">
+        <strong>{answer === exercise.answer ? <><Check size={18} aria-hidden="true"/> Correct!</> : 'Not quite — let’s learn it.'}</strong>
+        {answer !== exercise.answer && <p>Correct answer: {exercise.answer}</p>}
+        <p>{exercise.explanation}</p>
+        <button className="primary" onClick={() => {setAnswer(null); setStep(value => value + 1);}}>{step === content.exercises.length - 1 ? 'Finish lesson' : 'Next exercise'}</button>
+      </div>}
+    </>}
+  </section></div>;
+}

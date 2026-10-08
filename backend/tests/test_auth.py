@@ -1,0 +1,94 @@
+import pytest
+from datetime import datetime, timedelta, timezone
+from fastapi.testclient import TestClient
+from sqlalchemy import create_engine, select
+from sqlalchemy.orm import Session
+from sqlalchemy.pool import StaticPool
+from app.main import app
+from app.database import Base, get_db
+from app.models import User, AuthSession
+from app.auth import upsert_google_user, digest, settings, oauth
+from fastapi import HTTPException
+
+@pytest.fixture
+def db():
+    engine = create_engine('sqlite://', connect_args={'check_same_thread': False}, poolclass=StaticPool)
+    Base.metadata.create_all(engine)
+    with Session(engine) as session:
+        app.dependency_overrides[get_db] = lambda: session
+        yield session
+    app.dependency_overrides.clear()
+    engine.dispose()
+
+def claims(subject='google-1', email='ADE@example.test'):
+    return {'sub':subject, 'email':email, 'email_verified':True, 'name':'Adé'}
+
+def test_first_and_returning_identity(db):
+    first = upsert_google_user(db, claims()); db.commit()
+    assert first.email == 'ade@example.test'
+    assert upsert_google_user(db, claims()).id == first.id
+    second = upsert_google_user(db, claims('google-2','ada@example.test')); db.commit()
+    assert second.id != first.id
+
+def test_reject_unverified_and_identity_collision(db):
+    with pytest.raises(HTTPException):
+        upsert_google_user(db, {**claims(), 'email_verified':False})
+    db.add(User(email='ade@example.test', display_name='Other')); db.commit()
+    with pytest.raises(HTTPException) as error:
+        upsert_google_user(db, claims())
+    assert error.value.status_code == 409
+
+def test_session_expiry_logout_and_csrf(db):
+    user = upsert_google_user(db, claims()); db.commit()
+    db.add(AuthSession(token_hash=digest('opaque-token'),user_id=user.id,expires_at=datetime.now(timezone.utc)+timedelta(days=1))); db.commit()
+    client=TestClient(app); client.cookies.set('lingonaija_session','opaque-token')
+    response=client.get('/api/auth/me')
+    assert response.json()['id'] == str(user.id)
+    assert response.headers['cache-control']=='no-store'
+    assert client.post('/api/auth/logout',headers={'origin':'https://attacker.example'}).status_code==403
+    assert client.post('/api/auth/logout',headers={'origin':settings.frontend_url}).status_code==204
+    assert db.get(AuthSession,digest('opaque-token')) is None
+    assert client.get('/api/auth/me').status_code==401
+    db.add(AuthSession(token_hash=digest('expired'),user_id=user.id,expires_at=datetime.now(timezone.utc)-timedelta(seconds=1)));db.commit()
+    client.cookies.set('lingonaija_session','expired')
+    assert client.get('/api/auth/me').status_code==401
+
+def test_callback_rejects_missing_state(db):
+    response=TestClient(app).get('/api/auth/google/callback?code=invalid&state=invalid',follow_redirects=False)
+    assert response.status_code==303
+    assert 'auth_error=signin' in response.headers['location']
+    assert db.scalar(select(AuthSession)) is None
+
+@pytest.mark.parametrize('active',[True,False])
+def test_callback_creates_secure_session_only_for_active_user(db,monkeypatch,active):
+    user=upsert_google_user(db,claims());user.is_active=active;db.commit()
+    async def verified_identity(request):
+        return {'userinfo':claims()}
+    monkeypatch.setattr(oauth.google,'authorize_access_token',verified_identity)
+    response=TestClient(app).get('/api/auth/google/callback',follow_redirects=False)
+    if active:
+        assert 'signed_in=1' in response.headers['location']
+        cookie=response.headers['set-cookie']
+        assert 'HttpOnly' in cookie and 'SameSite=lax' in cookie
+        session=db.scalar(select(AuthSession));assert session is not None
+        assert len(session.token_hash)==64
+    else:
+        assert 'auth_error=signin' in response.headers['location']
+        assert db.scalar(select(AuthSession)) is None
+
+def test_https_cookie_and_session_rotation(db, monkeypatch):
+    user = upsert_google_user(db, claims()); db.commit()
+    db.add(AuthSession(token_hash=digest('previous-session'), user_id=user.id,
+        expires_at=datetime.now(timezone.utc)+timedelta(days=1))); db.commit()
+    async def verified_identity(request):
+        return {'userinfo':claims()}
+    monkeypatch.setattr(oauth.google, 'authorize_access_token', verified_identity)
+    monkeypatch.setattr(settings, 'cookie_secure', True)
+    client = TestClient(app, base_url='https://testserver')
+    client.cookies.set('lingonaija_session','previous-session')
+    response = client.get('/api/auth/google/callback', follow_redirects=False)
+    assert response.status_code == 303
+    assert 'Secure' in response.headers['set-cookie']
+    assert 'HttpOnly' in response.headers['set-cookie']
+    assert db.get(AuthSession, digest('previous-session')) is None
+    assert db.scalar(select(AuthSession)) is not None

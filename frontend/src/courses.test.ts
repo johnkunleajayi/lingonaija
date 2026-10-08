@@ -1,0 +1,2 @@
+import {describe,it,expect} from 'vitest';import {courses,lessonState} from './courses';
+describe('learning paths',()=>{it('provides three distinct courses',()=>{expect(Object.keys(courses)).toHaveLength(3);expect(new Set(Object.values(courses).map(c=>c.lessons[0])).size).toBe(3);Object.values(courses).forEach(c=>{expect(c.lessons).toHaveLength(8);expect(c.units).toHaveLength(3)})});it('marks progress and locks future lessons',()=>{expect(lessonState(0)).toBe('completed');expect(lessonState(2)).toBe('current');expect(lessonState(3)).toBe('locked')})});
