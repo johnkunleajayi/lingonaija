@@ -44,8 +44,81 @@ it('opens the real Yoruba lesson from the dashboard without saving progress',asy
  await screen.findByRole('heading',{name:'Your Yorùbá journey'});
  fireEvent.click(screen.getByRole('button',{name:'Continue the journey'}));
  expect(screen.getByRole('dialog').textContent).toContain('A Warm Welcome');
+ expect((screen.getByRole('button',{name:'Everyday greetings, locked'}) as HTMLButtonElement).disabled).toBe(true);
  fireEvent.click(screen.getByRole('button',{name:'Close lesson'}));
- fireEvent.click(screen.getByRole('button',{name:'A warm welcome, completed'}));
+ fireEvent.click(screen.getByRole('button',{name:'A warm welcome, current'}));
  expect(screen.getByRole('dialog').textContent).toContain('Exercise 1 of 4');
  expect(requests).toHaveBeenCalledTimes(2);
+});
+
+it('restores real completion and XP on the Yoruba dashboard',async()=>{
+ vi.stubGlobal('fetch',vi.fn().mockResolvedValueOnce({ok:true,json:async()=>({id:'123',display_name:'Ada',preferred_language:'yoruba',progress:{total_xp:10,completions:[{language:'yoruba',lesson_id:'a-warm-welcome',status:'completed',first_choice_score:3,completed_at:'2026-10-08',xp:10}]}})}).mockResolvedValue({ok:true}));
+ render(<App/>);await screen.findByRole('button',{name:'Sign out'});
+ fireEvent.click(screen.getAllByRole('button',{name:'Continue learning'})[0]);
+ await screen.findByRole('heading',{name:'Your Yorùbá journey'});
+ expect(screen.getByRole('button',{name:'A warm welcome, completed'})).toBeTruthy();
+ expect(screen.getByText('50% · 10 XP')).toBeTruthy();
+ expect((screen.getByRole('button',{name:'Everyday greetings, current'}) as HTMLButtonElement).disabled).toBe(false);
+ fireEvent.click(screen.getByRole('button',{name:'Continue the journey'}));
+ expect(screen.getByRole('dialog').textContent).toContain('Everyday Greetings');
+ expect(screen.getByText('1 of 2 available lessons complete')).toBeTruthy();
+ expect(screen.queryByText('2 of 8 lessons complete · demo')).toBeNull();
+});
+
+it('shows both completed lessons and 20 XP from real progress',async()=>{
+ vi.stubGlobal('fetch',vi.fn().mockResolvedValueOnce({ok:true,json:async()=>({id:'123',display_name:'Ada',preferred_language:'yoruba',progress:{total_xp:20,completions:['a-warm-welcome','everyday-greetings'].map(lesson_id=>({language:'yoruba',lesson_id,status:'completed',first_choice_score:4,completed_at:'2026-10-08',xp:10}))}})}).mockResolvedValue({ok:true}));
+ render(<App/>);await screen.findByRole('button',{name:'Sign out'});
+ fireEvent.click(screen.getAllByRole('button',{name:'Continue learning'})[0]);
+ await screen.findByRole('heading',{name:'Your Yorùbá journey'});
+ expect(screen.getByText('100% · 20 XP')).toBeTruthy();
+ expect(screen.getByText('2 of 2 available lessons complete')).toBeTruthy();
+ expect(screen.getByRole('button',{name:'Everyday greetings, completed'})).toBeTruthy();
+});
+
+it('keeps Yoruba and Igbo progress separate while completing the Igbo lesson',async()=>{
+ const yoruba={language:'yoruba',lesson_id:'a-warm-welcome',status:'completed',first_choice_score:3,completed_at:'2026-10-08',xp:10};
+ const igbo={...yoruba,language:'igbo',first_choice_score:4};
+ const requests=vi.fn().mockResolvedValueOnce({ok:true,json:async()=>({id:'123',display_name:'Ada',preferred_language:'igbo',progress:{total_xp:10,completions:[yoruba]}})})
+ .mockResolvedValueOnce({ok:true}).mockResolvedValueOnce({ok:true,json:async()=>({total_xp:20,completions:[yoruba,igbo]})}).mockResolvedValue({ok:true});
+ vi.stubGlobal('fetch',requests);render(<App/>);await screen.findByRole('button',{name:'Sign out'});
+ fireEvent.click(screen.getAllByRole('button',{name:'Continue learning'})[0]);await screen.findByRole('heading',{name:'Your Igbo journey'});
+ expect(screen.getByText('0% · 0 XP')).toBeTruthy();
+ expect((screen.getByRole('button',{name:'How are you?, locked'}) as HTMLButtonElement).disabled).toBe(true);
+ fireEvent.click(screen.getByRole('button',{name:'Continue the journey'}));
+ expect(screen.getByText('Igbo · Unit 1')).toBeTruthy();
+ for(const choice of ['Nnọọ','Ndewo','Kedu?','Ọ dị mma']){
+  fireEvent.click(screen.getByRole('button',{name:choice}));
+  fireEvent.click(screen.getByRole('button',{name:choice==='Ọ dị mma'?'Finish lesson':'Next exercise'}));
+ }
+ await waitFor(()=>expect(screen.getByRole('status').textContent).toContain('Completion saved'));
+ expect(requests).toHaveBeenCalledWith('/api/learning/igbo/a-warm-welcome/complete',expect.objectContaining({body:JSON.stringify({answers:[0,2,1,0]})}));
+ fireEvent.click(screen.getByRole('button',{name:'Back to my journey'}));
+ expect(screen.getByText('100% · 10 XP')).toBeTruthy();
+ expect(screen.getByRole('button',{name:'A warm welcome, completed'})).toBeTruthy();
+ fireEvent.change(screen.getByRole('combobox'),{target:{value:'yoruba'}});
+ await screen.findByRole('heading',{name:'Your Yorùbá journey'});
+ expect(screen.getByText('50% · 10 XP')).toBeTruthy();
+});
+
+it('completes Hausa independently and preserves Igbo and Yoruba dashboard progress',async()=>{
+ const records=['yoruba','igbo'].map(language=>({language,lesson_id:'a-warm-welcome',status:'completed',first_choice_score:3,completed_at:'2026-10-08',xp:10}));
+ const requests=vi.fn().mockResolvedValueOnce({ok:true,json:async()=>({id:'123',display_name:'Ada',preferred_language:'hausa',progress:{total_xp:20,completions:records}})})
+ .mockResolvedValueOnce({ok:true}).mockResolvedValueOnce({ok:true,json:async()=>({total_xp:30,completions:[...records,{...records[0],language:'hausa'}]})}).mockResolvedValue({ok:true});
+ vi.stubGlobal('fetch',requests);render(<App/>);await screen.findByRole('button',{name:'Sign out'});
+ fireEvent.click(screen.getAllByRole('button',{name:'Continue learning'})[0]);await screen.findByRole('heading',{name:'Your Hausa journey'});
+ expect(screen.getByText('0% · 0 XP')).toBeTruthy();
+ expect((screen.getByRole('button',{name:'Welcome a friend, locked'}) as HTMLButtonElement).disabled).toBe(true);
+ fireEvent.click(screen.getByRole('button',{name:'Continue the journey'}));
+ expect(screen.getByText('Hausa · Unit 1')).toBeTruthy();
+ for(const [i,choice] of ['Sannu da zuwa','Sannu','Ina kwana?','Lafiya lau'].entries()){
+  fireEvent.click(screen.getByRole('button',{name:choice}));
+  fireEvent.click(screen.getByRole('button',{name:i===3?'Finish lesson':'Next exercise'}));
+ }
+ await waitFor(()=>expect(screen.getByRole('status').textContent).toContain('Completion saved'));
+ expect(requests).toHaveBeenCalledWith('/api/learning/hausa/a-warm-welcome/complete',expect.objectContaining({body:JSON.stringify({answers:[1,0,2,1]})}));
+ fireEvent.click(screen.getByRole('button',{name:'Back to my journey'}));expect(screen.getByText('100% · 10 XP')).toBeTruthy();
+ for(const [language,name,progress] of [['yoruba','Yorùbá','50% · 10 XP'],['igbo','Igbo','100% · 10 XP']]){
+  fireEvent.change(screen.getByRole('combobox'),{target:{value:language}});
+  await screen.findByRole('heading',{name:`Your ${name} journey`});expect(screen.getByText(progress)).toBeTruthy();
+ }
 });

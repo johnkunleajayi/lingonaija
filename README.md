@@ -4,13 +4,13 @@ Learn the languages. Live the culture.
 Official workspace: C:\Users\JOHN-KUNLE\OneDrive\Desktop\lingonaija. Work only here.
 
 ## Current implementation
-React/TypeScript/Vite/Tailwind frontend and FastAPI/SQLAlchemy/Alembic modular monolith with PostgreSQL. The redesigned landing page includes a photographic hero, three language cards, everyday situations, learning-path preview, culture, reward previews and Google calls to action. The existing dashboard is preserved with authentication controls. Learning progress and rewards remain illustrative mock data.
+React/TypeScript/Vite/Tailwind frontend and FastAPI/SQLAlchemy/Alembic modular monolith with PostgreSQL. The redesigned landing page includes a photographic hero, three language cards, everyday situations, learning-path preview, culture, reward previews and Google calls to action. The existing dashboard is preserved with authentication controls. Yorùbá’s first lesson has persistent completion and a one-time 10 XP award; other learning-path and reward previews remain illustrative.
 
 Google authentication uses server-side OpenID Connect authorization-code flow with Authlib, state, nonce and PKCE S256. The Google client secret and Google tokens stay on the backend. Verified Google subjects identify returning User records; first-time identities create independent UUID users with normalized email. Unrelated accounts with the same email are not silently linked, and inactive users are rejected.
 
 The auth_sessions table persists SHA-256 hashes of random session tokens, user IDs and expiration times. HttpOnly, SameSite=Lax cookies hold the opaque token; COOKIE_SECURE enables Secure cookies for HTTPS production. Sessions expire after SESSION_DAYS (default seven), and expiry is checked on authenticated requests. Sign-out checks the exact Origin, deletes the database session and clears the cookie. Reauthentication replaces the presented old session. The temporary signed HttpOnly OAuth-state cookie lasts ten minutes. Google token signature, issuer, audience, expiration and nonce validation is delegated to Authlib. No Google access/refresh token is stored in localStorage.
 
-Endpoints: GET /api/auth/google, GET /api/auth/google/callback, GET /api/auth/me, POST /api/auth/logout and POST /api/enrollments. GET /api/health remains process liveness, not database readiness. Vite proxies /api to port 8000. Future enrollments/progress should be owned by (user_id, language/course_id); User.preferred_language is only a profile preference. Authenticated language selection now persists enrollment and preferred language; learning progress remains mock data.
+Endpoints: GET /api/auth/google, GET /api/auth/google/callback, GET /api/auth/me, POST /api/auth/logout POST /api/enrollments and POST /api/learning/yoruba/a-warm-welcome/complete. GET /api/health remains process liveness, not database readiness. Vite proxies /api to port 8000. Future enrollments/progress should be owned by (user_id, language/course_id); User.preferred_language is only a profile preference. Authenticated language selection now persists enrollment and preferred language; Yorùbá’s first lesson completion and XP persist; other course progress remains mock data.
 
 ## Environment files
 Copy examples only when the destination does not already exist:
@@ -104,7 +104,7 @@ No lint script is configured. TypeScript checking runs in the production build. 
 ## Assets and deferred scope
 ASSETS.md documents local optimized Ninthgrid/Pexels Lagos friendship photography and Ben Iwara/Unsplash Lagos portrait photography. Original SVG language companions are preserved. Images are illustrative, not endorsements or assertions of a subject's ethnic identity. Native-speaker/cultural review remains appropriate before educational release.
 
-Full lessons, AI, speech, audio, pronunciation scoring, persisted learning progress and XP/streak/achievement backend logic remain deferred. No dashboard redesign or new product features were added in this continuation. No commits or pushes.
+Additional lessons, AI, speech, audio, pronunciation scoring, streaks, achievements and further reward logic remain deferred. No dashboard redesign or new product features were added in this continuation. No commits or pushes.
 
 
 ## Persistent language enrollment
@@ -122,12 +122,43 @@ Manual test:
 5. Sign out and use another Google account. Its enrollments remain independent. Sign back in with the first account: its enrollments and active language remain.
 6. In Neon SQL Editor, SELECT user_id, language, created_at FROM enrollments ORDER BY user_id, language; shows one row per user/language. Never paste cookies or credentials into chat or tracked files.
 
-Enrollment validation: 24 backend tests and 9 frontend tests pass; production build passes. Migration applied to the configured Neon database, revision 0003_enrollments. Existing auth/health tests are preserved. Live database/API checks use temporary synthetic test users in a transaction and roll them back; they are not a live Google login test. Lessons and reward/progress backend features remain deferred.
+Enrollment validation: 24 backend tests and 9 frontend tests pass; production build passes. Migration applied to the configured Neon database, revision 0003_enrollments. Existing auth/health tests are preserved. Live database/API checks use temporary synthetic test users in a transaction and roll them back; they are not a live Google login test. Additional lesson and reward/progress features remain deferred beyond A Warm Welcome and its one-time 10 XP award.
 
 ## First interactive lesson
 
 Yorùbá → Unit 1 → **A Warm Welcome** is now interactive. From the signed-in Yorùbá dashboard, choose **Continue the journey**, or open the first **A warm welcome** path node. Four multiple-choice exercises practise polite welcome, morning and afternoon greetings. Each choice receives immediate feedback and an explanation; the final screen summarises the session. Close and reopen to practise again.
 
-Lesson content lives in `frontend/src/lessonContent.ts`, separate from the reusable `Lesson.tsx` interface. Other lesson entries remain previews. Dashboard progress remains mock data; lesson completion is not persisted and awards no XP, streaks or achievements. No database migration or new API is needed for this lesson.
+Lesson content lives in `frontend/src/lessonContent.ts`, separate from the reusable `Lesson.tsx` interface. Other lesson entries remain previews. Yorùbá completion and total XP now come from PostgreSQL. First completion awards 10 XP once; replays preserve the original first-choice score and timestamp. Other courses remain previews. No streaks or achievements are implemented. Migration 0004_lesson_completions and the completion API now persist this lesson’s result.
 
 Manual checks: try one incorrect answer and one correct answer, finish all four exercises, return to the journey, then reopen to confirm a fresh session. Check both themes and a narrow viewport. Escape closes the lesson; keyboard focus returns to the opening control.
+
+### Persistent first completion
+Run `alembic upgrade head` in the backend environment before restarting. `POST /api/learning/yoruba/a-warm-welcome/complete` accepts exactly four first-choice option indexes; the server calculates the score. An authenticated session, trusted Origin and Yorùbá enrollment are required. `/api/auth/me` includes completion records and total XP. A unique user/language/lesson key makes replay and retry idempotent; XP is stored on that single record and summed, with no separate mutable balance. Presence of the record means completed status.
+
+Manual check: complete A Warm Welcome, confirm 10 XP and the completed path node, refresh or sign out/in, then replay. XP remains 10 and the saved original score/timestamp remain unchanged. Another account starts with no completion or XP. Failed saves offer Retry saving.
+
+Completion validation: 32 backend tests passed; 15 frontend tests passed with `npm test -- --testTimeout=15000` (the initial parallel run hit two five-second test timeouts); TypeScript/production build passed. Neon is at revision 0004_lesson_completions. A real Neon API check verified first completion, replay and restored progress with temporary data rolled back.
+
+## Yorùbá Unit 1: Everyday Greetings
+
+Lesson 2 uses the same lesson component, completion endpoint and completion table as A Warm Welcome. Its four original situation-based exercises practise morning, afternoon, late-evening greetings and a bedtime farewell. Greeting usage was checked against the University of Texas COERLL Yorùbá Yé Mi chapter on greetings: https://coerll.utexas.edu/yemi/pdfs/yy_ch1.pdf. Exercise scenarios and explanations are original LingoNaija content.
+
+Apply migration `0005_everyday_greetings` with `alembic upgrade head` before restarting the backend. It expands the existing lesson constraint without changing saved Lesson 1 records. The endpoint is now `/api/learning/yoruba/{lesson_id}/complete`; supported IDs are `a-warm-welcome` and `everyday-greetings`. Each accepts four first-choice option indexes. Lesson 2 requires the authenticated learner's own Lesson 1 completion, enforced by the API and dashboard. Each awards 10 XP once; replays preserve the original score and timestamp. Dashboard progress is 0/2, 1/2 or 2/2 and total XP is 0, 10 or 20. All later lessons remain locked previews.
+
+Manual check: sign in and enroll in Yorùbá. Before Lesson 1 completion, Everyday Greetings is locked. Complete A Warm Welcome, then use Continue the journey or the Everyday greetings path node. Complete Lesson 2 and confirm 2/2, 100% and 20 XP. Refresh or sign out/in to confirm restoration; replay either lesson and verify XP remains 20. Accounts remain independent.
+
+## First Igbo lesson: A Warm Welcome
+
+Igbo Unit 1 now has four original practical exercises: welcoming a guest (Nnọọ), greeting a neighbour (Ndewo), checking in (Kedu?) and replying positively (Ọ dị mma). Usage was checked against Harvard ELIAS, Greetings and Responses (https://elias.fas.harvard.edu/languages/igbo/beginning/3/greetings-and-responses), and NKENNE, Basic Igbo Greetings and Introductions (https://www.nkenne.com/blog/basic-igbo-greetings-and-introductions). These sources support phrase meanings; exercise scenarios and explanations are original, not copied lesson material. Igbo greetings vary by community; the lesson makes no universal claims about time-of-day conventions or gestures.
+
+The shared endpoint is now POST `/api/learning/{language}/{lesson_id}/complete`. Igbo's ID is `a-warm-welcome`; the Yorùbá URLs remain valid. Migration `0006_igbo_welcome` extends the existing completion constraint. There is no new engine or table. First-choice score, timestamp and the one-time 10 XP award remain keyed by user/language/lesson. Igbo requires Igbo enrollment, with no Yorùbá prerequisite. `/api/auth/me` keeps aggregate total_xp for compatibility; dashboard XP and progress are calculated from only the selected language's completion records. Hausa remains a preview; all further Igbo lessons remain locked.
+
+Manual check: restart the backend/frontend, sign in, choose Igbo and open My learning. Before completing this lesson, Igbo shows 0/1 and 0 XP even if Yorùbá is complete. Finish A Warm Welcome and confirm 1/1, 100% and 10 XP. Refresh/sign in again and replay: the original score/timestamp and 10 XP remain unchanged. Switch to Yorùbá to confirm its own progress and XP are unchanged. Another account begins independently. Apply migrations using `alembic upgrade head` in the backend environment if running another database.
+
+## First Hausa lesson: A Warm Welcome
+
+Four original situations practise welcoming a visitor (Sannu da zuwa), a simple hello (Sannu), a morning inquiry about sleep (Ina kwana?) and a positive reply (Lafiya lau). Meanings and usage were verified against the University of Wisconsin-Madison's Hausa Greetings resource (https://wisc.pb.unizin.org/lctlresources/chapter/hausa-greetings/) and Omniglot's Useful phrases in Hausa (https://www.omniglot.com/language/phrases/hausa.php). Wisconsin corroborates the hello and morning exchange; Omniglot also lists Sannu da zuwa as welcome. Sources are references for short language facts, not copied exercises, layouts or artwork. Scenarios and explanations are original. The lesson introduces common beginner greetings without claiming that every community or social setting uses identical forms.
+
+The existing shared component and endpoint POST `/api/learning/hausa/a-warm-welcome/complete` handle Hausa. Migration `0007_hausa_welcome` only extends the existing completion check constraint. No new engine or table. Hausa enrollment is required; there is no Igbo or Yorùbá prerequisite. Completion, first-choice score, timestamp and a one-time 10 XP award use the existing user/language/lesson key. Replays preserve the original record. All three dashboards show their own course progress and XP; `/api/auth/me` also retains aggregate total_xp for compatibility. All later Hausa lessons remain locked.
+
+Manual test: restart the app, sign in, select Hausa and enter My learning. Open A Warm Welcome, finish four exercises and confirm 1/1, 100% and 10 XP. Refresh/sign in again and replay: XP and the original saved score/timestamp stay unchanged. Switch between Hausa, Igbo and Yorùbá to confirm separate progress; another account starts independently. Run `alembic upgrade head` in the backend environment if using another database.

@@ -91,9 +91,10 @@ async def google_callback(request: Request, db: Session = Depends(get_db)):
 
 @router.get("/me")
 def me(response: Response, user: User = Depends(current_user), db: Session = Depends(get_db)):
+    from app.learning import progress
     response.headers["Cache-Control"] = "no-store"
     return {"id": str(user.id), "display_name": user.display_name, "preferred_language": user.preferred_language,
-            "enrollments": list(db.scalars(select(Enrollment.language).where(Enrollment.user_id == user.id).order_by(Enrollment.language)))}
+            "progress": progress(db, user.id), "enrollments": list(db.scalars(select(Enrollment.language).where(Enrollment.user_id == user.id).order_by(Enrollment.language)))}
 
 @router.post("/logout", status_code=204)
 def logout(request: Request, db: Session = Depends(get_db)):

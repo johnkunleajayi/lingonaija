@@ -1,8 +1,8 @@
 // @vitest-environment jsdom
-import {render, screen, fireEvent, cleanup} from '@testing-library/react';
+import {render, screen, fireEvent, cleanup, waitFor} from '@testing-library/react';
 import {afterEach, expect, it, vi} from 'vitest';
 import {Lesson} from './Lesson';
-import {learningCourses, warmWelcome} from './lessonContent';
+import {learningCourses, warmWelcome, everydayGreetings} from './lessonContent';
 afterEach(cleanup);
 it('gives immediate feedback, prevents repeat answers and completes all exercises', () => {
   const close = vi.fn(); render(<Lesson content={warmWelcome} onClose={close}/>);
@@ -32,7 +32,61 @@ it('starts fresh when reopened and keeps content structurally valid', () => {
   fireEvent.click(screen.getByRole('button', {name: warmWelcome.exercises[0].answer})); view.unmount();
   render(<Lesson content={warmWelcome} onClose={() => {}}/>);
   expect(screen.queryByRole('status')).toBeNull();
-  expect(Object.keys(learningCourses)).toEqual(['yoruba']);
+  expect(Object.keys(learningCourses)).toEqual(['yoruba','igbo','hausa']);
   expect(new Set(warmWelcome.exercises.map(item => item.id)).size).toBe(4);
   for (const item of warmWelcome.exercises) expect(item.options.filter(option => option === item.answer)).toHaveLength(1);
+});
+
+it('submits first choices and retries a failed save without losing the session',async()=>{
+ const save=vi.fn().mockRejectedValueOnce(new Error('offline')).mockResolvedValue(undefined);
+ render(<Lesson content={warmWelcome} onClose={()=>{}} onComplete={save}/>);
+ for(let i=0;i<4;i++){
+  fireEvent.click(screen.getByRole('button',{name:warmWelcome.exercises[i].answer}));
+  fireEvent.click(screen.getByRole('button',{name:i===3?'Finish lesson':'Next exercise'}));
+ }
+ await screen.findByRole('button',{name:'Retry saving'});
+ expect(save).toHaveBeenCalledWith([0,1,2,1]);
+ fireEvent.click(screen.getByRole('button',{name:'Retry saving'}));
+ await waitFor(()=>expect(screen.getByRole('status').textContent).toContain('Completion saved'));
+ expect(save).toHaveBeenCalledTimes(2);
+});
+
+it('plays Everyday Greetings with its own content and first-choice answers',async()=>{
+ const save=vi.fn().mockResolvedValue(undefined);
+ render(<Lesson content={everydayGreetings} onClose={()=>{}} onComplete={save}/>);
+ expect(screen.getByRole('heading',{name:'Everyday Greetings'})).toBeTruthy();
+ for(let i=0;i<4;i++){
+  expect(screen.getByRole('heading',{name:everydayGreetings.exercises[i].prompt})).toBeTruthy();
+  fireEvent.click(screen.getByRole('button',{name:everydayGreetings.exercises[i].answer}));
+  expect(screen.getByRole('status').textContent).toContain(everydayGreetings.exercises[i].explanation);
+  fireEvent.click(screen.getByRole('button',{name:i===3?'Finish lesson':'Next exercise'}));
+ }
+ await waitFor(()=>expect(save).toHaveBeenCalledWith([1,0,2,1]));
+ expect(screen.getByText(everydayGreetings.summary!)).toBeTruthy();
+});
+
+it('uses the shared player for Igbo greetings and submits its own answer key',async()=>{
+ const content=learningCourses.igbo!.units[0].lessons[0];const save=vi.fn().mockResolvedValue(undefined);
+ render(<Lesson language="igbo" content={content} onClose={()=>{}} onComplete={save}/>);
+ expect(screen.getByText('Igbo · Unit 1')).toBeTruthy();
+ for(let i=0;i<4;i++){
+  fireEvent.click(screen.getByRole('button',{name:content.exercises[i].answer}));
+  expect(screen.getByRole('status').textContent).toContain(content.exercises[i].explanation);
+  fireEvent.click(screen.getByRole('button',{name:i===3?'Finish lesson':'Next exercise'}));
+ }
+ await waitFor(()=>expect(save).toHaveBeenCalledWith([0,2,1,0]));
+ expect(screen.getByText(content.summary!)).toBeTruthy();
+});
+
+it('plays Hausa using the shared lesson player and submits first choices',async()=>{
+ const content=learningCourses.hausa!.units[0].lessons[0];const save=vi.fn().mockResolvedValue(undefined);
+ render(<Lesson language="hausa" content={content} onClose={()=>{}} onComplete={save}/>);
+ expect(screen.getByText('Hausa · Unit 1')).toBeTruthy();
+ for(let i=0;i<4;i++){
+  fireEvent.click(screen.getByRole('button',{name:content.exercises[i].answer}));
+  expect(screen.getByRole('status').textContent).toContain(content.exercises[i].explanation);
+  fireEvent.click(screen.getByRole('button',{name:i===3?'Finish lesson':'Next exercise'}));
+ }
+ await waitFor(()=>expect(save).toHaveBeenCalledWith([1,0,2,1]));
+ expect(screen.getByText(content.summary!)).toBeTruthy();
 });

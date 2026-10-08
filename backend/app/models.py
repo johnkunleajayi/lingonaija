@@ -1,6 +1,6 @@
 import uuid
 from datetime import datetime
-from sqlalchemy import Boolean, DateTime, String, CheckConstraint, ForeignKey, func
+from sqlalchemy import Integer, ForeignKeyConstraint, Boolean, DateTime, String, CheckConstraint, ForeignKey, func
 from sqlalchemy.orm import Mapped, mapped_column
 from app.database import Base
 class User(Base):
@@ -27,3 +27,17 @@ class Enrollment(Base):
     user_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("users.id", ondelete="CASCADE"), primary_key=True)
     language: Mapped[str] = mapped_column(String(20), primary_key=True)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+
+class LessonCompletion(Base):
+    __tablename__ = "lesson_completions"
+    __table_args__ = (
+        ForeignKeyConstraint(['user_id', 'language'], ['enrollments.user_id', 'enrollments.language'], ondelete='CASCADE'),
+        CheckConstraint("(language = 'yoruba' AND lesson_id IN ('a-warm-welcome', 'everyday-greetings')) OR (language = 'igbo' AND lesson_id = 'a-warm-welcome') OR (language = 'hausa' AND lesson_id = 'a-warm-welcome')", name='ck_completion_lesson'),
+        CheckConstraint('first_choice_score BETWEEN 0 AND 4 AND xp = 10', name='ck_completion_score_xp'),
+    )
+    user_id: Mapped[uuid.UUID] = mapped_column(primary_key=True)
+    language: Mapped[str] = mapped_column(String(20), primary_key=True)
+    lesson_id: Mapped[str] = mapped_column(String(80), primary_key=True)
+    first_choice_score: Mapped[int] = mapped_column(Integer)
+    xp: Mapped[int] = mapped_column(Integer, default=10)
+    completed_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
