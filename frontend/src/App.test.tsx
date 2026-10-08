@@ -44,6 +44,7 @@ it('opens the real Yoruba lesson from the dashboard without saving progress',asy
  await screen.findByRole('heading',{name:'Your Yorùbá journey'});
  fireEvent.click(screen.getByRole('button',{name:'Continue the journey'}));
  expect(screen.getByRole('dialog').textContent).toContain('A Warm Welcome');
+ expect(screen.queryByRole('button',{name:'Practise with Adé'})).toBeNull();
  expect((screen.getByRole('button',{name:'Everyday greetings, locked'}) as HTMLButtonElement).disabled).toBe(true);
  fireEvent.click(screen.getByRole('button',{name:'Close lesson'}));
  fireEvent.click(screen.getByRole('button',{name:'A warm welcome, current'}));
@@ -58,6 +59,7 @@ it('restores real completion and XP on the Yoruba dashboard',async()=>{
  await screen.findByRole('heading',{name:'Your Yorùbá journey'});
  expect(screen.getByRole('button',{name:'A warm welcome, completed'})).toBeTruthy();
  expect(screen.getByText('50% · 10 XP')).toBeTruthy();
+ expect(screen.getByRole('button',{name:'Practise with Adé'})).toBeTruthy();
  expect((screen.getByRole('button',{name:'Everyday greetings, current'}) as HTMLButtonElement).disabled).toBe(false);
  fireEvent.click(screen.getByRole('button',{name:'Continue the journey'}));
  expect(screen.getByRole('dialog').textContent).toContain('Everyday Greetings');
@@ -141,4 +143,14 @@ it('shows global level progress while course XP remains separate after switching
  expect(screen.getByRole('progressbar',{name:'Progress toward next level'}).getAttribute('aria-valuenow')).toBe('0');
  fireEvent.change(screen.getByRole('combobox'),{target:{value:'hausa'}});await screen.findByRole('heading',{name:'Your Hausa journey'});
  expect(screen.getByText('Level 2')).toBeTruthy();expect(screen.getByText('20 total XP')).toBeTruthy();expect(screen.getByText('0% · 0 XP')).toBeTruthy();
+});
+
+it('unlocks practice only for the selected completed language',async()=>{
+ vi.stubGlobal('fetch',vi.fn().mockResolvedValueOnce({ok:true,json:async()=>({id:'123',display_name:'Ada',preferred_language:'igbo',progress:{total_xp:10,completions:[{language:'igbo',lesson_id:'a-warm-welcome',status:'completed',first_choice_score:4,completed_at:'2026-10-08',xp:10}]}})}).mockResolvedValue({ok:true}));
+ render(<App/>);await screen.findByRole('button',{name:'Sign out'});fireEvent.click(screen.getAllByRole('button',{name:'Continue learning'})[0]);await screen.findByRole('heading',{name:'Your Igbo journey'});
+ expect(screen.getByRole('button',{name:'Practise with Ada'})).toBeTruthy();
+ fireEvent.change(screen.getByRole('combobox'),{target:{value:'hausa'}});await screen.findByRole('heading',{name:'Your Hausa journey'});
+ expect(screen.queryByRole('button',{name:'Practise with Amina'})).toBeNull();
+ fireEvent.change(screen.getByRole('combobox'),{target:{value:'yoruba'}});await screen.findByRole('heading',{name:'Your Yorùbá journey'});
+ expect(screen.queryByRole('button',{name:'Practise with Adé'})).toBeNull();
 });

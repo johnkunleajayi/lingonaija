@@ -176,3 +176,36 @@ Manual check: restart the application, sign in and complete a lesson. The dashbo
 The authenticated dashboard derives a level from the existing API's global `progress.total_xp`, alongside course-specific completion and course XP. No new database field, table or migration. Threshold for Level L is `10 * L * (L - 1)`: Level 1 at 0 XP, Level 2 at 20, Level 3 at 60, Level 4 at 120, Level 5 at 200. Each next level costs 20 more XP than the previous step. The dashboard shows the current level, global total, progress within the level and XP remaining to the next threshold. Existing completion awards and streak behavior are unchanged.
 
 Manual check: with 0 XP see Level 1, 0 total XP and 20 XP remaining. Complete one new lesson to see 10 XP toward Level 2; complete another new lesson in any language to reach Level 2 at 20 XP. Switch languages or refresh: global level/XP remain the same while course progress changes. Replays award no new XP and cannot advance the level. All four existing lessons yield 40 total XP, still Level 2 with 20 XP remaining to Level 3; higher levels are covered by threshold tests, not new lesson content.
+
+## Yorùbá conversation practice MVP
+
+After your Yorùbá A Warm Welcome completion, open Practise with Adé. The existing three-turn weekend visit uses deterministic local evaluation: welcome, morning, then afternoon. No paid API, API key, model configuration, new dependency or migration. Restart the backend after this update. Existing private .env entries for the removed provider are ignored; the private file was not edited.
+
+Accepted base responses (marks optional):
+- Welcome: `e kaabo`, `e kabo`, `kaabo`, `kabo`.
+- Morning: `e kaaaro`, `e kaaro`, `e karo`, `kaaaro`, `kaaro`, `karo`.
+- Afternoon: `e kaasan`, `e kasan`, `kaasan`, `kasan`.
+
+Normalization uses Unicode decomposition, removes diacritics, ignores capitalization, whitespace and Unicode punctuation. An optional final address to Adé is allowed. Canonically marked input and decomposed Unicode input work equally. This is a deliberately bounded accepted-response evaluator, not unrestricted semantic understanding or fuzzy matching. Wrong-context greetings and unlisted prose fail and offer retry. Correct responses and repeated wrong attempts show the preferred marked form and a gentle reminder to notice marks; a first wrong attempt only hints.
+
+Existing GET `/api/conversation/yoruba` and POST `/api/conversation/yoruba/evaluate` preserve authentication, the learner's own completion gate, Origin validation and input bounds. Response fields remain meaning_correct, preferred_form, orthography_note, feedback, next_turn and complete. Practice stores no responses/results and adds no XP or streak activity. No provider calls are made. All evaluation is local in FastAPI.
+
+Manual test: type `E kaabo!`, `E kaaro`, and `E kaasan` for the respective turns; marked forms should also pass. Try an afternoon greeting on the welcome turn to see retry, then correct it. Extra spacing and capitalization must not change a correct result. Refresh/close resets practice; learning progress, XP and streak remain unchanged.
+
+### Conversation feedback UX
+
+The first wrong attempt on each turn shows a contextual hint without displaying the answer. A second wrong attempt reveals the preferred marked form once. Correct responses show that form once, a gentle orthography reminder and a visible reply from Adé; the learner then chooses Next turn. Adé's final reply appears before Finish conversation opens the completion summary. Retry returns keyboard focus to the input. Attempt counts live only in component state and reset for each new turn or reopened practice. Deterministic evaluation, API fields, saved progress and rewards are unchanged. Preferred-form metadata remains in the response but is not displayed on the first wrong attempt.
+
+Manual check: give two wrong-context greetings on the arrival turn. The first should hint; the second should reveal the marked answer once. Type E kaabo and read Adé's reply before continuing. On the next turn, the first wrong answer should again only hint. Finish all three turns and read Adé's last reply before the summary.
+
+## Shared conversation practice: Igbo and Hausa
+
+All three languages use one Conversation component, one deterministic evaluator and GET `/api/conversation/{language}` / POST `/api/conversation/{language}/evaluate`. Each practice requires that learner's own A Warm Welcome completion in the selected language. Existing Yorùbá URLs remain valid. Language switching remounts practice so draft responses, attempts and character replies never carry into another course. No database migration, rewards, saved results or external service.
+
+Igbo: a visit with Ada. Three turns welcome her (`Nnọọ`, accepted unmarked nnoo/nno), ask how she is (`Kedu?`, also Kedu ka ị mere?), then reply positively (`Ọ dị mma`). Ada replies with original English dialogue; her check-in reply also uses the already-taught Ọ dị mma. Phrase usage verified against Harvard ELIAS Greetings and Responses (https://elias.fas.harvard.edu/languages/igbo/beginning/3/greetings-and-responses) and NKENNE Basic Igbo Greetings and Introductions (https://www.nkenne.com/blog/basic-igbo-greetings-and-introductions). Harvard corroborates the welcome/check-in/reply and longer check-in variant; NKENNE corroborates welcome and positive reply. Scenarios, hints and English replies are original.
+
+Hausa: a morning visit with Amina. Three turns welcome her (`Sannu da zuwa`), ask how she slept (`Ina kwana?`, also Yaya kwana), then reply positively (`Lafiya lau`, also Lafiya). Amina's morning reply uses the already-taught Lafiya lau and Ina kwana. Verified against University of Wisconsin-Madison Hausa Greetings (https://wisc.pb.unizin.org/lctlresources/chapter/hausa-greetings/) for the morning exchange, positive replies and ina/yaya variation; Omniglot Useful phrases in Hausa (https://www.omniglot.com/language/phrases/hausa.php) for the welcome and morning greeting. No source exercise text or artwork is copied.
+
+All three retain Unicode/mark, case, punctuation and spacing normalization, with an optional final direct address to the current companion. Accepted forms remain explicit and context-specific, not unrestricted semantic matching. First wrong attempts only hint; repeated wrong attempts show the preferred form once. Correct responses display the character's reply before Next turn, and a final reply before Finish conversation. Attempt counts reset per turn/reopened practice. Orthography advice suits the selected language.
+
+Manual test: complete Igbo A Warm Welcome, open Practise with Ada and try Nnoo, Kedu?, O di mma. For Hausa after its own lesson, use Sannu da zuwa, Ina kwana?, Lafiya lau. Test a wrong-context greeting twice to check hint/reveal, then correct it to see the character reply. Switch languages and verify only that course's completed welcome unlocks practice. XP, streaks and course progress stay unchanged.
