@@ -122,3 +122,23 @@ it('completes Hausa independently and preserves Igbo and Yoruba dashboard progre
   await screen.findByRole('heading',{name:`Your ${name} journey`});expect(screen.getByText(progress)).toBeTruthy();
  }
 });
+
+it('restores a persistent daily streak on the authenticated dashboard',async()=>{
+ vi.stubGlobal('fetch',vi.fn().mockResolvedValueOnce({ok:true,json:async()=>({id:'123',display_name:'Ada',preferred_language:'hausa',progress:{total_xp:0,completions:[],current_streak:3,longest_streak:7}})}).mockResolvedValue({ok:true}));
+ render(<App/>);await screen.findByRole('button',{name:'Sign out'});
+ fireEvent.click(screen.getAllByRole('button',{name:'Continue learning'})[0]);await screen.findByRole('heading',{name:'Your Hausa journey'});
+ expect(screen.getByLabelText('Daily learning streak').textContent).toContain('3 day streak');
+ expect(screen.getByLabelText('Daily learning streak').textContent).toContain('Longest: 7 days');
+});
+
+it('shows global level progress while course XP remains separate after switching languages',async()=>{
+ const completions=[{language:'yoruba',lesson_id:'a-warm-welcome',status:'completed',first_choice_score:4,completed_at:'2026-10-08',xp:10},{language:'igbo',lesson_id:'a-warm-welcome',status:'completed',first_choice_score:4,completed_at:'2026-10-08',xp:10}];
+ vi.stubGlobal('fetch',vi.fn().mockResolvedValueOnce({ok:true,json:async()=>({id:'123',display_name:'Ada',preferred_language:'yoruba',progress:{total_xp:20,completions}})}).mockResolvedValue({ok:true}));
+ render(<App/>);await screen.findByRole('button',{name:'Sign out'});
+ fireEvent.click(screen.getAllByRole('button',{name:'Continue learning'})[0]);await screen.findByRole('heading',{name:'Your Yorùbá journey'});
+ expect(screen.getByText('Level 2')).toBeTruthy();expect(screen.getByText('20 total XP')).toBeTruthy();
+ expect(screen.getByText('50% · 10 XP')).toBeTruthy();
+ expect(screen.getByRole('progressbar',{name:'Progress toward next level'}).getAttribute('aria-valuenow')).toBe('0');
+ fireEvent.change(screen.getByRole('combobox'),{target:{value:'hausa'}});await screen.findByRole('heading',{name:'Your Hausa journey'});
+ expect(screen.getByText('Level 2')).toBeTruthy();expect(screen.getByText('20 total XP')).toBeTruthy();expect(screen.getByText('0% · 0 XP')).toBeTruthy();
+});

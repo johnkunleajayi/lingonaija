@@ -8,6 +8,7 @@ from sqlalchemy.orm import Session
 from app.auth import current_user
 from app.config import get_settings
 from app.database import get_db
+from app.streaks import learning_day, record_activity, streak_summary
 from app.models import Enrollment, LessonCompletion, User
 
 router = APIRouter(prefix='/api/learning', tags=['learning'])
@@ -19,7 +20,7 @@ class CompletionRequest(BaseModel):
 
 def progress(db: Session, user_id):
     rows = list(db.scalars(select(LessonCompletion).where(LessonCompletion.user_id == user_id)))
-    return {'total_xp': sum(row.xp for row in rows), 'completions': [
+    return {**streak_summary(db, user_id), 'total_xp': sum(row.xp for row in rows), 'completions': [
         {'language': row.language, 'lesson_id': row.lesson_id, 'status': 'completed',
          'first_choice_score': row.first_choice_score, 'completed_at': row.completed_at.isoformat(), 'xp': row.xp}
         for row in rows]}
@@ -45,6 +46,7 @@ def complete(language: str, lesson_id: str, payload: CompletionRequest, request:
         except IntegrityError:
             if db.get(LessonCompletion, key) is None:
                 raise
+    record_activity(db, user.id, learning_day())
     db.commit()
     response.headers['Cache-Control'] = 'no-store'
     return progress(db, user.id)

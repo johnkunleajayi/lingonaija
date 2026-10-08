@@ -1,6 +1,6 @@
 import uuid
-from datetime import datetime
-from sqlalchemy import Integer, ForeignKeyConstraint, Boolean, DateTime, String, CheckConstraint, ForeignKey, func
+from datetime import date, datetime
+from sqlalchemy import Date, Integer, ForeignKeyConstraint, Boolean, DateTime, String, CheckConstraint, ForeignKey, func
 from sqlalchemy.orm import Mapped, mapped_column
 from app.database import Base
 class User(Base):
@@ -41,3 +41,11 @@ class LessonCompletion(Base):
     first_choice_score: Mapped[int] = mapped_column(Integer)
     xp: Mapped[int] = mapped_column(Integer, default=10)
     completed_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+
+class LearningStreak(Base):
+    __tablename__ = 'learning_streaks'
+    __table_args__ = (CheckConstraint('current_streak >= 0 AND longest_streak >= current_streak', name='ck_streak_counts'),)
+    user_id: Mapped[uuid.UUID] = mapped_column(ForeignKey('users.id', ondelete='CASCADE'), primary_key=True)
+    current_streak: Mapped[int] = mapped_column(Integer, default=0)
+    longest_streak: Mapped[int] = mapped_column(Integer, default=0)
+    last_active_date: Mapped[date] = mapped_column(Date)
