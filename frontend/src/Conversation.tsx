@@ -1,3 +1,4 @@
+import {Character} from './Character';
 import {courses,type Language} from './courses';
 import {useRef, useState} from 'react';
 type Turn={index:number;ade:string;preferred_form:string};
@@ -23,22 +24,22 @@ export function Conversation({language='yoruba'}:{language?:Language}){
   }catch(e){setError(e instanceof Error?e.message:'Practice is unavailable. Please try again.')}
   finally{lock.current=false;setBusy(false)}
  }
- return <section className="learner-level" aria-label="Conversation practice">
-  <h2>Conversation practice with {character}</h2><p>{title} · 3 short greeting turns · no rewards or saved results</p>
+ return <section className="conversation-card" aria-label="Conversation practice">
+  <div className="conversation-heading"><div><span className="eyebrow">REAL-LIFE CONNECTIONS</span><h2>Conversation practice with {character}</h2><p>{title} · 3 short greeting turns · no rewards or saved results</p></div><Character language={language}/></div>
   {!opened?<button className="primary" disabled={busy} onClick={()=>{void call(true)}}>{busy?'Opening…':`Practise with ${character}`}</button>:<>
    {finished?<><h3>Conversation complete!</h3><p>You welcomed {character} and exchanged everyday greetings.</p></>:<>
-    <p><strong>Turn {(turn?.index??0)+1} of 3 · {character}</strong></p><p>{turn?.ade}</p>
+    <p className="conversation-turn"><strong>Turn {(turn?.index??0)+1} of 3 · {character}</strong></p><p className="conversation-prompt">{turn?.ade}</p>
     <form onSubmit={e=>{e.preventDefault();if(answer.trim()&&!feedback)void call(false)}}>
      <label htmlFor="conversation-response">Your {courses[language].name} response</label>
-     <input ref={input} autoFocus id="conversation-response" maxLength={500} value={answer} disabled={busy||!!feedback} onChange={e=>setAnswer(e.target.value)} style={{display:'block',width:'100%',padding:12,margin:'10px 0',borderRadius:10,border:'1px solid var(--border)',background:'var(--surface)',color:'var(--ink)',fontSize:16}}/>
+     <input ref={input} autoFocus id="conversation-response" maxLength={500} value={answer} disabled={busy||!!feedback} onChange={e=>setAnswer(e.target.value)} className="conversation-input"/>
      <p>Tone marks are welcome, but you can type without them. We’ll focus on your meaning.</p>
      {!feedback&&<button className="primary" disabled={busy||!answer.trim()}>{busy?'Checking…':'Send response'}</button>}
     </form>
    </>}
-   {feedback&&!finished&&<div role="status">
+   {feedback&&!finished&&<div className="conversation-feedback" data-correct={feedback.meaning_correct} role="status">
     <p><strong>{feedback.meaning_correct?'Meaning understood':'Let’s try again'}</strong></p><p>{feedback.feedback}</p>
     {(feedback.meaning_correct||wrongAttempts>=2)&&<><p>Preferred form: <strong>{feedback.preferred_form}</strong></p><p>{feedback.orthography_note}</p></>}
-    {feedback.meaning_correct&&<blockquote aria-label={`${character}’s reply`} style={{margin:'16px 0',padding:16,borderLeft:'4px solid var(--accent)',background:'var(--soft)',borderRadius:10}}><strong>{character}</strong><p>{feedback.character_reply??(language==='yoruba'?adeReplies[turn!.index]:'Thank you for your greeting!')}</p></blockquote>}
+    {feedback.meaning_correct&&<blockquote aria-label={`${character}’s reply`} className="character-reply"><strong>{character}</strong><p>{feedback.character_reply??(language==='yoruba'?adeReplies[turn!.index]:'Thank you for your greeting!')}</p></blockquote>}
     <button className="primary" onClick={()=>{
      if(feedback.complete){setFinished(true);return;}
      setTurn(feedback.next_turn);setFeedback(null);setAnswer('');

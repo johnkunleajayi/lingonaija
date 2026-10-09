@@ -4,13 +4,13 @@ Learn the languages. Live the culture.
 Official workspace: C:\Users\JOHN-KUNLE\OneDrive\Desktop\lingonaija. Work only here.
 
 ## Current implementation
-React/TypeScript/Vite/Tailwind frontend and FastAPI/SQLAlchemy/Alembic modular monolith with PostgreSQL. The redesigned landing page includes a photographic hero, three language cards, everyday situations, learning-path preview, culture, reward previews and Google calls to action. The existing dashboard is preserved with authentication controls. Yorùbá’s first lesson has persistent completion and a one-time 10 XP award; other learning-path and reward previews remain illustrative.
+React/TypeScript/Vite/Tailwind frontend and FastAPI/SQLAlchemy/Alembic modular monolith with PostgreSQL. The redesigned landing page includes a photographic hero, three language cards, everyday situations, learning-path preview, culture, reward previews and Google calls to action. The existing dashboard is preserved with authentication controls. Yorùbá, Igbo and Hausa each have five real lessons across two units, with four contextual exercises per lesson. Lessons unlock sequentially per language. Completion persists with immutable first-choice score and a one-time 10 XP award; global XP, derived levels and daily streaks remain shared across languages. See [curriculum sources](CURRICULUM_SOURCES.md).
 
 Google authentication uses server-side OpenID Connect authorization-code flow with Authlib, state, nonce and PKCE S256. The Google client secret and Google tokens stay on the backend. Verified Google subjects identify returning User records; first-time identities create independent UUID users with normalized email. Unrelated accounts with the same email are not silently linked, and inactive users are rejected.
 
 The auth_sessions table persists SHA-256 hashes of random session tokens, user IDs and expiration times. HttpOnly, SameSite=Lax cookies hold the opaque token; COOKIE_SECURE enables Secure cookies for HTTPS production. Sessions expire after SESSION_DAYS (default seven), and expiry is checked on authenticated requests. Sign-out checks the exact Origin, deletes the database session and clears the cookie. Reauthentication replaces the presented old session. The temporary signed HttpOnly OAuth-state cookie lasts ten minutes. Google token signature, issuer, audience, expiration and nonce validation is delegated to Authlib. No Google access/refresh token is stored in localStorage.
 
-Endpoints: GET /api/auth/google, GET /api/auth/google/callback, GET /api/auth/me, POST /api/auth/logout POST /api/enrollments and POST /api/learning/yoruba/a-warm-welcome/complete. GET /api/health remains process liveness, not database readiness. Vite proxies /api to port 8000. Future enrollments/progress should be owned by (user_id, language/course_id); User.preferred_language is only a profile preference. Authenticated language selection now persists enrollment and preferred language; Yorùbá’s first lesson completion and XP persist; other course progress remains mock data.
+Endpoints: GET /api/auth/google, GET /api/auth/google/callback, GET /api/auth/me, POST /api/auth/logout POST /api/enrollments and POST /api/learning/{language}/{lesson_id}/complete. GET /api/health remains process liveness, not database readiness. Vite proxies /api to port 8000. Future enrollments/progress should be owned by (user_id, language/course_id); User.preferred_language is only a profile preference. Authenticated language selection now persists enrollment and preferred language; All fifteen lesson completions persist independently per user and language.
 
 ## Environment files
 Copy examples only when the destination does not already exist:
@@ -133,7 +133,7 @@ Lesson content lives in `frontend/src/lessonContent.ts`, separate from the reusa
 Manual checks: try one incorrect answer and one correct answer, finish all four exercises, return to the journey, then reopen to confirm a fresh session. Check both themes and a narrow viewport. Escape closes the lesson; keyboard focus returns to the opening control.
 
 ### Persistent first completion
-Run `alembic upgrade head` in the backend environment before restarting. `POST /api/learning/yoruba/a-warm-welcome/complete` accepts exactly four first-choice option indexes; the server calculates the score. An authenticated session, trusted Origin and Yorùbá enrollment are required. `/api/auth/me` includes completion records and total XP. A unique user/language/lesson key makes replay and retry idempotent; XP is stored on that single record and summed, with no separate mutable balance. Presence of the record means completed status.
+Run `alembic upgrade head` in the backend environment before restarting. `POST /api/learning/{language}/{lesson_id}/complete` accepts exactly four first-choice option indexes; the server calculates the score. An authenticated session, trusted Origin and Yorùbá enrollment are required. `/api/auth/me` includes completion records and total XP. A unique user/language/lesson key makes replay and retry idempotent; XP is stored on that single record and summed, with no separate mutable balance. Presence of the record means completed status.
 
 Manual check: complete A Warm Welcome, confirm 10 XP and the completed path node, refresh or sign out/in, then replay. XP remains 10 and the saved original score/timestamp remain unchanged. Another account starts with no completion or XP. Failed saves offer Retry saving.
 
@@ -209,3 +209,14 @@ Hausa: a morning visit with Amina. Three turns welcome her (`Sannu da zuwa`), as
 All three retain Unicode/mark, case, punctuation and spacing normalization, with an optional final direct address to the current companion. Accepted forms remain explicit and context-specific, not unrestricted semantic matching. First wrong attempts only hint; repeated wrong attempts show the preferred form once. Correct responses display the character's reply before Next turn, and a final reply before Finish conversation. Attempt counts reset per turn/reopened practice. Orthography advice suits the selected language.
 
 Manual test: complete Igbo A Warm Welcome, open Practise with Ada and try Nnoo, Kedu?, O di mma. For Hausa after its own lesson, use Sannu da zuwa, Ina kwana?, Lafiya lau. Test a wrong-context greeting twice to check hint/reveal, then correct it to see the character reply. Switch languages and verify only that course's completed welcome unlocks practice. XP, streaks and course progress stay unchanged.
+
+## Five-lesson curriculum database update
+
+Apply migration `0009_five_lesson_curriculum` before completing newly added lessons. It expands the existing completion check constraint; it adds no table and preserves saved scores, timestamps and XP. Downgrade refuses to discard expanded-curriculum completions.
+
+```powershell
+Set-Location 'C:\Users\JOHN-KUNLE\OneDrive\Desktop\lingonaija\backend'
+.\.venv\Scripts\python.exe -m alembic upgrade head
+```
+
+Keep the existing private `backend/.env` and database URL unchanged. To check the journey, sign in, choose a language, complete Getting Started in order, then complete Family & People and Food & Drink in Everyday Life. Each first completion adds 10 XP; replays add none. Switch language to confirm its separate path and the shared total XP. Each finished course contributes 50 XP.

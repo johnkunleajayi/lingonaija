@@ -1,0 +1,168 @@
+[
+  {
+    "id": "introduce-yourself",
+    "title": "Introduce Yourself",
+    "introduction": "Meet someone new, share your name and say that you are a student.",
+    "summary": "You practised exchanging names and introducing yourself as a student.",
+    "sourceIds": [
+      "yoruba-phrases",
+      "yoruba-ch5"
+    ],
+    "exercises": [
+      {
+        "id": "class-introduction",
+        "prompt": "You join a community class. Your name is Adé. Choose an introduction so the group knows your name.",
+        "options": [
+          "Orúkọ mi ni Adé",
+          "Kí ni orúkọ yín?",
+          "Ẹ káàbọ̀"
+        ],
+        "answer": "Orúkọ mi ni Adé",
+        "explanation": "Orúkọ mi ni ... introduces your name. Here the name is Adé."
+      },
+      {
+        "id": "ask-name",
+        "prompt": "You have introduced yourself to a new guest. How can you politely ask their name?",
+        "options": [
+          "Orúkọ mi ni Adé",
+          "Ẹ káàárọ̀",
+          "Kí ni orúkọ yín?"
+        ],
+        "answer": "Kí ni orúkọ yín?",
+        "explanation": "Kí ni orúkọ yín? asks a person respectfully, or several people, what their name is."
+      },
+      {
+        "id": "student-introduction",
+        "prompt": "At a campus welcome event, someone asks about you. Choose the statement that says you are a student.",
+        "options": [
+          "Orúkọ mi ni Adé",
+          "Mo jẹ́ akẹ́kọ̀ọ́",
+          "Mo fẹ́ mu omi"
+        ],
+        "answer": "Mo jẹ́ akẹ́kọ̀ọ́",
+        "explanation": "Mo jẹ́ akẹ́kọ̀ọ́ means I am a student. It adds a little information to your introduction."
+      },
+      {
+        "id": "respond-to-introduction",
+        "prompt": "A new classmate says “Orúkọ mi ni Bádé.” What would be a fitting next step?",
+        "options": [
+          "Introduce yourself with your own name",
+          "Offer them food because they said they are hungry",
+          "Say good night because they are leaving"
+        ],
+        "answer": "Introduce yourself with your own name",
+        "explanation": "Bádé has introduced their name. You can introduce yours with Orúkọ mi ni ..."
+      }
+    ]
+  },
+  {
+    "id": "family-and-people",
+    "title": "Family & People",
+    "introduction": "Meet relatives and friends. Practise identifying parents and a younger sibling in a family introduction.",
+    "summary": "You practised introducing a parent, understanding a sibling relationship and asking who someone’s father is.",
+    "sourceIds": [
+      "yoruba-ch5"
+    ],
+    "exercises": [
+      {
+        "id": "introduce-mother",
+        "prompt": "At a family gathering, you are Túndé’s mother and introduce yourself to a visitor. Which statement fits?",
+        "options": [
+          "Èmi ni bàbáa Kóyè",
+          "Èmi ni màmáa Túndé",
+          "Olú ni àbúrò Adé"
+        ],
+        "answer": "Èmi ni màmáa Túndé",
+        "explanation": "Èmi ni màmáa Túndé identifies the speaker as Túndé’s mother."
+      },
+      {
+        "id": "introduce-father",
+        "prompt": "You are Kóyè’s father, meeting another parent for the first time. Choose your introduction.",
+        "options": [
+          "Èmi ni bàbáa Kóyè",
+          "Èmi ni màmáa Túndé",
+          "Ẹ káàárọ̀"
+        ],
+        "answer": "Èmi ni bàbáa Kóyè",
+        "explanation": "Èmi ni bàbáa Kóyè identifies the speaker as Kóyè’s father."
+      },
+      {
+        "id": "younger-sibling",
+        "prompt": "Your friend explains a family photo: “Olú ni àbúrò Adé.” What relationship have they described?",
+        "options": [
+          "Adé is Olú’s younger sibling",
+          "Olú is Adé’s father",
+          "Olú is Adé’s younger sibling"
+        ],
+        "answer": "Olú is Adé’s younger sibling",
+        "explanation": "Àbúrò refers to a younger sibling. This statement identifies Olú as Adé’s younger sibling."
+      },
+      {
+        "id": "ask-about-father",
+        "prompt": "You are meeting a friend’s family and want to ask who their father is. Which question fits?",
+        "options": [
+          "Ta ni bàbáà rẹ?",
+          "Kí ni orúkọ yín?",
+          "Mo fẹ́ mu omi"
+        ],
+        "answer": "Ta ni bàbáà rẹ?",
+        "explanation": "Ta ni asks who. Ta ni bàbáà rẹ? asks who your father is."
+      }
+    ]
+  },
+  {
+    "id": "food-and-drink",
+    "title": "Food & Drink",
+    "introduction": "At a shared meal, ask for water or rice and recognise a friendly meal wish.",
+    "summary": "You practised expressing a wish to drink water or eat rice, and wishing someone an enjoyable meal.",
+    "sourceIds": [
+      "yoruba-ch7"
+    ],
+    "exercises": [
+      {
+        "id": "want-water",
+        "prompt": "After a warm walk, your host asks what you would like. Choose the statement that says you want to drink water.",
+        "options": [
+          "Mo fẹ́ jẹ ìrẹsì",
+          "Ẹ káàbọ̀",
+          "Mo fẹ́ mu omi"
+        ],
+        "answer": "Mo fẹ́ mu omi",
+        "explanation": "Mo fẹ́ mu omi means I want to drink water. Mu is drink and omi is water."
+      },
+      {
+        "id": "want-rice",
+        "prompt": "At lunch, rice is available. How do you say you want to eat rice?",
+        "options": [
+          "Mo fẹ́ mu omi",
+          "Mo fẹ́ jẹ ìrẹsì",
+          "Ẹ káàárọ̀"
+        ],
+        "answer": "Mo fẹ́ jẹ ìrẹsì",
+        "explanation": "Mo fẹ́ jẹ ìrẹsì means I want to eat rice. Jẹ is eat and ìrẹsì is rice."
+      },
+      {
+        "id": "meal-wish",
+        "prompt": "Your friend sits down to eat. Choose the expression that wishes them an enjoyable meal.",
+        "options": [
+          "Ẹ kú ìjẹun o!",
+          "Ẹ káàárọ̀",
+          "Mo fẹ́ mu omi"
+        ],
+        "answer": "Ẹ kú ìjẹun o!",
+        "explanation": "Ẹ kú ìjẹun o! is a meal greeting, similar to enjoy your meal."
+      },
+      {
+        "id": "drink-confirmation",
+        "prompt": "A guest says “Mo lè mu omi” when you offer water. What have they told you?",
+        "options": [
+          "They want to eat rice",
+          "They can drink water",
+          "They are saying good night"
+        ],
+        "answer": "They can drink water",
+        "explanation": "Mo lè mu omi means I can drink water. Lè expresses can in this sentence."
+      }
+    ]
+  }
+]

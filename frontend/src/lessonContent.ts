@@ -1,4 +1,7 @@
 import type {Language} from './courses';
+import yorubaLessons from './content/yoruba.json';
+import igboLessons from './content/igbo.json';
+import hausaLessons from './content/hausa.json';
 
 export interface Exercise {
   id: string;
@@ -12,18 +15,19 @@ export interface LessonContent {
   title: string;
   introduction: string;
   summary?: string;
+  sourceIds?: string[];
   exercises: Exercise[];
 }
 export interface LearningCourse {
   language: Language;
-  units: {id: string; lessons: LessonContent[]}[];
+  units: {id: string; title: string; lessons: LessonContent[]}[];
 }
 
-// Content is independent of UI and learner records. Two Yorùbá lessons and the first Igbo and Hausa lessons are real.
-export const learningCourses: Partial<Record<Language, LearningCourse>> = {
+// Published lesson content is independent of UI and learner records.
+const publishedCourses: Record<Language, LearningCourse> = {
   yoruba: {
     language: 'yoruba',
-    units: [{id: 'unit-1', lessons: [{
+    units: [{id: 'unit-1', title: 'Getting Started', lessons: [{
       id: 'a-warm-welcome', title: 'A Warm Welcome',
       introduction: 'Start with a warm hello. Practise polite greetings you can use when meeting someone or welcoming a guest.',
       exercises: [
@@ -46,7 +50,7 @@ export const learningCourses: Partial<Record<Language, LearningCourse>> = {
   },
   igbo: {
     language: 'igbo',
-    units: [{id: 'unit-1', lessons: [{
+    units: [{id: 'unit-1', title: 'Getting Started', lessons: [{
       id: 'a-warm-welcome', title: 'A Warm Welcome',
       introduction: 'Welcome a guest, greet a neighbour and check in with a friend. Practise these useful Igbo expressions; greetings can vary between communities.',
       summary: 'You practised welcoming someone, opening a conversation and exchanging a friendly greeting.',
@@ -60,7 +64,7 @@ export const learningCourses: Partial<Record<Language, LearningCourse>> = {
   },
   hausa: {
     language: 'hausa',
-    units: [{id: 'unit-1', lessons: [{
+    units: [{id: 'unit-1', title: 'Getting Started', lessons: [{
       id: 'a-warm-welcome', title: 'A Warm Welcome',
       introduction: 'Welcome a visitor, say hello and exchange a morning greeting. Hausa greetings often continue with questions and replies; start with these useful expressions.',
       summary: 'You practised welcoming a visitor, saying hello and exchanging a morning greeting and reply.',
@@ -73,6 +77,17 @@ export const learningCourses: Partial<Record<Language, LearningCourse>> = {
     }]}]
   }
 };
+const additions: Record<Language, LessonContent[]> = {yoruba: yorubaLessons, igbo: igboLessons, hausa: hausaLessons};
+export const learningCourses = Object.fromEntries(
+  (Object.keys(publishedCourses) as Language[]).map(language => {
+    const lessons = [...publishedCourses[language].units[0].lessons, ...additions[language]];
+    return [language, {language, units: [
+      {id: 'unit-1', title: 'Getting Started', lessons: lessons.slice(0, 3)},
+      {id: 'unit-2', title: 'Everyday Life', lessons: lessons.slice(3)}
+    ]}];
+  })
+) as Record<Language, LearningCourse>;
+export const courseLessons = (language: Language) => learningCourses[language].units.flatMap(unit => unit.lessons);
 export const warmWelcome = learningCourses.yoruba!.units[0].lessons[0];
 
 export const everydayGreetings = learningCourses.yoruba!.units[0].lessons[1];

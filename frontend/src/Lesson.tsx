@@ -9,7 +9,7 @@ import {courses, type Language} from './courses';
 
 
 
-export function Lesson({content, onClose, onComplete, language='yoruba'}: {content: LessonContent; language?: Language; onClose: () => void; onComplete?: (answers:number[]) => Promise<void>}) {
+export function Lesson({content, onClose, onComplete, language='yoruba', unitNumber=1}: {content: LessonContent; language?: Language; unitNumber?: number; onClose: () => void; onComplete?: (answers:number[]) => Promise<void>}) {
 
   const [step, setStep] = useState(0);
 
@@ -59,7 +59,7 @@ export function Lesson({content, onClose, onComplete, language='yoruba'}: {conte
 
   return <div className="backdrop" onKeyDown={event => {
 
-    if (event.key === 'Escape') {event.stopPropagation(); onClose();}
+    if (event.key === 'Escape') {event.stopPropagation(); if(saveState!=='saving')onClose();}
 
     if (event.key === 'Tab') {
 
@@ -75,25 +75,25 @@ export function Lesson({content, onClose, onComplete, language='yoruba'}: {conte
 
   }}><section ref={panel} className="modal lesson-player" role="dialog" aria-modal="true" aria-labelledby="lesson-title">
 
-    <button className="icon close" onClick={onClose} aria-label="Close lesson"><X/></button>
+    <button className="icon close" disabled={saveState==='saving'} onClick={onClose} aria-label={complete&&saveState!=='saved'?'Close lesson without saving':'Close lesson'}><X/></button>
 
-    <BookOpen aria-hidden="true"/><span className="eyebrow">{courses[language].name} · Unit 1</span>
+    <BookOpen aria-hidden="true"/><span className="eyebrow">{courses[language].name} · Unit {unitNumber}</span>
 
     <h2 id="lesson-title">{content.title}</h2>
 
     {complete ? <>
 
-      <h3 ref={heading} tabIndex={-1}>Lesson complete!</h3>
+      <h3 ref={heading} tabIndex={-1}>{saveState==='saved'?'Lesson complete!':saveState==='saving'?'Saving your completion…':saveState==='failed'?'Completion not saved':'Exercises finished'}</h3>
 
       <p>{content.summary ?? 'You practised welcoming a guest and greeting someone in the morning and afternoon.'}</p>
 
       <p>{correct} of {content.exercises.length} correct on your first choice. Keep practising!</p>
 
-      <p className="lesson-note" role="status">{saveState==='saved'?'Completion saved. This lesson awards 10 XP once; replaying adds no XP.':saveState==='saving'?'Saving completion…':saveState==='failed'?'Could not save completion. Please retry.':'This practice session is not saved yet.'}</p>
+      <p className="lesson-note" role="status">{saveState==='saved'?'Completion saved. This lesson awards 10 XP once; replaying adds no XP.':saveState==='saving'?'Saving completion…':saveState==='failed'?'Your progress and XP have not been confirmed saved. Retry saving before leaving.':'This practice session is not saved yet.'}</p>
 
       {saveState==='failed'&&<button className="primary" onClick={()=>{void saveCompletion()}}>Retry saving</button>}
 
-      <button className="primary" onClick={onClose}>Back to my journey</button>
+      <button className="primary" disabled={saveState==='saving'} onClick={onClose}>{saveState==='saved'?'Back to my journey':saveState==='saving'?'Saving…':'Leave without saving'}</button>
 
     </> : <>
 
@@ -109,7 +109,7 @@ export function Lesson({content, onClose, onComplete, language='yoruba'}: {conte
 
       }}>{option}</button>)}</div>
 
-      {answer !== null && <div className="lesson-feedback" role="status">
+      {answer !== null && <div className="lesson-feedback" data-correct={answer===exercise.answer} role="status">
 
         <strong>{answer === exercise.answer ? <><Check size={18} aria-hidden="true"/> Correct!</> : 'Not quite — let’s learn it.'}</strong>
 

@@ -1,0 +1,226 @@
+[
+  {
+    "id": "everyday-greetings",
+    "title": "Everyday Greetings",
+    "introduction": "Greet someone in the morning, afternoon or evening, and end a chat politely.",
+    "summary": "You practised greetings through the day and a see-you-later farewell.",
+    "sourceIds": [
+      "hausa-greetings",
+      "hausa-rti-greetings",
+      "hausa-phrases"
+    ],
+    "exercises": [
+      {
+        "id": "morning-neighbour",
+        "prompt": "You meet a neighbour at breakfast time. Choose the morning greeting that asks how they slept.",
+        "options": [
+          "Ina wuni?",
+          "Ina kwana?",
+          "Sai an jima"
+        ],
+        "answer": "Ina kwana?",
+        "explanation": "Ina kwana? is a morning greeting asking how someone slept."
+      },
+      {
+        "id": "afternoon-visit",
+        "prompt": "You arrive to visit a friend in the afternoon. Which greeting asks about their day?",
+        "options": [
+          "Ina wuni?",
+          "Ina kwana?",
+          "Sai an jima"
+        ],
+        "answer": "Ina wuni?",
+        "explanation": "Ina wuni? is used as an afternoon greeting, asking about the day."
+      },
+      {
+        "id": "evening-meeting",
+        "prompt": "You meet a friend in the evening and are staying to chat. Choose a good-evening greeting.",
+        "options": [
+          "Ina kwana?",
+          "Sai an jima",
+          "Barka da yamma"
+        ],
+        "answer": "Barka da yamma",
+        "explanation": "Barka da yamma is a good-evening expression."
+      },
+      {
+        "id": "leave-chat",
+        "prompt": "Your friendly chat is over and you will see each other later. What do you say as you leave?",
+        "options": [
+          "Ina kwana?",
+          "Sai an jima",
+          "Sannu da zuwa"
+        ],
+        "answer": "Sai an jima",
+        "explanation": "Sai an jima means see you later. It is a parting expression."
+      }
+    ]
+  },
+  {
+    "id": "introduce-yourself",
+    "title": "Introduce Yourself",
+    "introduction": "Share your name, ask a new acquaintance their name and say where you are from.",
+    "summary": "You practised sharing your name, addressing name questions to a man or woman and saying where you are from.",
+    "sourceIds": [
+      "hausa-phrases",
+      "hausa-peace-corps"
+    ],
+    "exercises": [
+      {
+        "id": "own-name",
+        "prompt": "You join a community group. Your name is Amina. Choose your introduction.",
+        "options": [
+          "Sunana Amina",
+          "Mi sunanka?",
+          "Sannu da zuwa"
+        ],
+        "answer": "Sunana Amina",
+        "explanation": "Sunana ... means my name is ... Here the name is Amina."
+      },
+      {
+        "id": "ask-man",
+        "prompt": "A man has introduced himself only with a greeting. Which question asks his name?",
+        "options": [
+          "Mi sunanki?",
+          "Sunana Amina",
+          "Mi sunanka?"
+        ],
+        "answer": "Mi sunanka?",
+        "explanation": "Mi sunanka? asks a man what his name is. The ending changes with the person addressed."
+      },
+      {
+        "id": "ask-woman",
+        "prompt": "A woman has greeted you but has not said her name. Which question asks her name?",
+        "options": [
+          "Sunana Amina",
+          "Mi sunanki?",
+          "Mi sunanka?"
+        ],
+        "answer": "Mi sunanki?",
+        "explanation": "Mi sunanki? asks a woman what her name is."
+      },
+      {
+        "id": "where-from",
+        "prompt": "You are from Kano and a new acquaintance asks where you are from. Choose the matching statement.",
+        "options": [
+          "Na fito daga Kano",
+          "Sunana Amina",
+          "Ina kwana?"
+        ],
+        "answer": "Na fito daga Kano",
+        "explanation": "Na fito daga ... means I am from ... Here the place is Kano."
+      }
+    ]
+  },
+  {
+    "id": "family-and-people",
+    "title": "Family & People",
+    "introduction": "Check in about someone’s family and understand questions about children or a spouse.",
+    "summary": "You practised checking in about family, children, a husband and a wife.",
+    "sourceIds": [
+      "hausa-greetings"
+    ],
+    "exercises": [
+      {
+        "id": "family-check-in",
+        "prompt": "After greeting a friend, you want to ask how their family is. Which question fits?",
+        "options": [
+          "Ina makaranta?",
+          "Ina iyali?",
+          "Ina gajiya?"
+        ],
+        "answer": "Ina iyali?",
+        "explanation": "Ina iyali? asks how your family is. It extends a friendly greeting."
+      },
+      {
+        "id": "children-check-in",
+        "prompt": "A friend asks “Ina yara?” Your children are doing very well. Which reply fits?",
+        "options": [
+          "Lafiya lau",
+          "Sai an jima",
+          "Sunana Amina"
+        ],
+        "answer": "Lafiya lau",
+        "explanation": "Ina yara? asks how the children are. Lafiya lau gives a positive reply: very well."
+      },
+      {
+        "id": "husband-check-in",
+        "prompt": "Your friend has mentioned their husband. You would like to ask how he is. Which question fits?",
+        "options": [
+          "Ina mata?",
+          "Ina yara?",
+          "Ina miji?"
+        ],
+        "answer": "Ina miji?",
+        "explanation": "Ina miji? asks how your husband is."
+      },
+      {
+        "id": "wife-check-in",
+        "prompt": "Your friend has mentioned their wife. You would like to ask how she is. Which question fits?",
+        "options": [
+          "Ina miji?",
+          "Ina mata?",
+          "Ina gajiya?"
+        ],
+        "answer": "Ina mata?",
+        "explanation": "Ina mata? asks how your wife is."
+      }
+    ]
+  },
+  {
+    "id": "food-and-drink",
+    "title": "Food & Drink",
+    "introduction": "At a shared meal, say you are hungry, express a food preference and recognise an offered drink.",
+    "summary": "You practised expressing hunger, wanting pineapple, declining chicken and recognising water.",
+    "sourceIds": [
+      "hausa-food",
+      "hausa-peace-corps"
+    ],
+    "exercises": [
+      {
+        "id": "hungry",
+        "prompt": "You have not eaten yet and your host asks how you feel. Choose the statement that says you are hungry.",
+        "options": [
+          "Ina jin yunwa",
+          "Ina son abarba",
+          "Ba na son kaza"
+        ],
+        "answer": "Ina jin yunwa",
+        "explanation": "Ina jin yunwa means I feel hungry."
+      },
+      {
+        "id": "pineapple",
+        "prompt": "Your host offers a choice of fruit. You would like pineapple. Which statement fits?",
+        "options": [
+          "Ina jin yunwa",
+          "Ba na son kaza",
+          "Ina son abarba"
+        ],
+        "answer": "Ina son abarba",
+        "explanation": "Ina son abarba can mean I like or want pineapple. In this situation, you are choosing pineapple."
+      },
+      {
+        "id": "chicken-preference",
+        "prompt": "A friend is choosing food for a shared meal. You do not like chicken. Which statement tells them that preference?",
+        "options": [
+          "Ina son abarba",
+          "Ba na son kaza",
+          "Ina jin yunwa"
+        ],
+        "answer": "Ba na son kaza",
+        "explanation": "Ba na son kaza means I do not like chicken."
+      },
+      {
+        "id": "water-offer",
+        "prompt": "After a warm walk, your host offers “ruwa.” What are they offering you?",
+        "options": [
+          "Water — a drink",
+          "Chicken — something to eat",
+          "Pineapple — a fruit"
+        ],
+        "answer": "Water — a drink",
+        "explanation": "Ruwa is water. This is an offer of a drink."
+      }
+    ]
+  }
+]

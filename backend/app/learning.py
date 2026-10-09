@@ -13,7 +13,25 @@ from app.models import Enrollment, LessonCompletion, User
 
 router = APIRouter(prefix='/api/learning', tags=['learning'])
 # First-choice option indexes for the four exercises, in published order.
-ANSWER_KEYS = {('yoruba', 'a-warm-welcome'): (0, 1, 2, 1), ('yoruba', 'everyday-greetings'): (1, 0, 2, 1), ('igbo', 'a-warm-welcome'): (0, 2, 1, 0), ('hausa', 'a-warm-welcome'): (1, 0, 2, 1)}
+LESSON_IDS = ('a-warm-welcome', 'everyday-greetings', 'introduce-yourself', 'family-and-people', 'food-and-drink')
+ANSWER_KEYS = {
+    ('yoruba', 'a-warm-welcome'): (0, 1, 2, 1),
+    ('yoruba', 'everyday-greetings'): (1, 0, 2, 1),
+    ('igbo', 'a-warm-welcome'): (0, 2, 1, 0),
+    ('hausa', 'a-warm-welcome'): (1, 0, 2, 1),
+    ('yoruba', 'introduce-yourself'): (0, 2, 1, 0),
+    ('yoruba', 'family-and-people'): (1, 0, 2, 0),
+    ('yoruba', 'food-and-drink'): (2, 1, 0, 1),
+    ('igbo', 'everyday-greetings'): (1, 0, 2, 1),
+    ('igbo', 'introduce-yourself'): (0, 2, 1, 0),
+    ('igbo', 'family-and-people'): (1, 0, 2, 1),
+    ('igbo', 'food-and-drink'): (0, 1, 2, 1),
+    ('hausa', 'everyday-greetings'): (1, 0, 2, 1),
+    ('hausa', 'introduce-yourself'): (0, 2, 1, 0),
+    ('hausa', 'family-and-people'): (1, 0, 2, 1),
+    ('hausa', 'food-and-drink'): (0, 2, 1, 0),
+}
+
 class CompletionRequest(BaseModel):
     answers: Annotated[list[Annotated[int, Field(strict=True, ge=0, le=2)]], Field(min_length=4, max_length=4)]
     model_config = ConfigDict(extra='forbid')
@@ -34,8 +52,9 @@ def complete(language: str, lesson_id: str, payload: CompletionRequest, request:
         raise HTTPException(404, 'Unknown lesson')
     if db.get(Enrollment, (user.id, language)) is None:
         raise HTTPException(409, 'Enroll in this language before completing this lesson')
-    if language == 'yoruba' and lesson_id == 'everyday-greetings' and db.get(LessonCompletion, (user.id, 'yoruba', 'a-warm-welcome')) is None:
-        raise HTTPException(409, 'Complete A Warm Welcome first')
+    lesson_index = LESSON_IDS.index(lesson_id)
+    if lesson_index > 0 and db.get(LessonCompletion, (user.id, language, LESSON_IDS[lesson_index - 1])) is None:
+        raise HTTPException(409, 'Complete the previous lesson first')
     key = (user.id, language, lesson_id)
     if db.get(LessonCompletion, key) is None:
         try:

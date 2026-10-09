@@ -16,10 +16,10 @@ it('gives immediate feedback, prevents repeat answers and completes all exercise
     expect((screen.getByRole('button', {name: choice}) as HTMLButtonElement).disabled).toBe(true);
     fireEvent.click(screen.getByRole('button', {name: index === 3 ? 'Finish lesson' : 'Next exercise'}));
   });
-  expect(screen.getByText('Lesson complete!')).toBeTruthy();
+  expect(screen.getByText('Exercises finished')).toBeTruthy();
   expect(screen.getByText('3 of 4 correct on your first choice. Keep practising!')).toBeTruthy();
   expect(screen.getByText('This practice session is not saved yet.')).toBeTruthy();
-  fireEvent.click(screen.getByRole('button', {name: 'Back to my journey'})); expect(close).toHaveBeenCalledOnce();
+  fireEvent.click(screen.getByRole('button', {name: 'Leave without saving'})); expect(close).toHaveBeenCalledOnce();
 });
 it('closes with Escape and restores focus when unmounted', () => {
   const trigger = document.createElement('button'); document.body.append(trigger); trigger.focus();
@@ -89,4 +89,35 @@ it('plays Hausa using the shared lesson player and submits first choices',async(
  }
  await waitFor(()=>expect(save).toHaveBeenCalledWith([1,0,2,1]));
  expect(screen.getByText(content.summary!)).toBeTruthy();
+});
+
+
+it('distinguishes pending, failed and saved completion and blocks exiting while saving',async()=>{
+ let finish!:(value?:unknown)=>void;let fail!:(reason?:unknown)=>void;
+ const save=vi.fn().mockImplementationOnce(()=>new Promise((resolve,reject)=>{finish=resolve;fail=reject})).mockImplementationOnce(()=>new Promise(resolve=>{finish=resolve}));
+ const close=vi.fn();render(<Lesson content={warmWelcome} onClose={close} onComplete={save}/>);
+ for(const [i,exercise] of warmWelcome.exercises.entries()){
+  fireEvent.click(screen.getByRole('button',{name:exercise.answer}));fireEvent.click(screen.getByRole('button',{name:i===3?'Finish lesson':'Next exercise'}));
+ }
+ expect(screen.getByRole('heading',{name:'Saving your completion…'})).toBeTruthy();expect(screen.queryByText('Lesson complete!')).toBeNull();
+ expect((screen.getByRole('button',{name:'Saving…'}) as HTMLButtonElement).disabled).toBe(true);
+ expect((screen.getByRole('button',{name:'Close lesson without saving'}) as HTMLButtonElement).disabled).toBe(true);
+ fireEvent.keyDown(screen.getByRole('dialog'),{key:'Escape'});expect(close).not.toHaveBeenCalled();
+ fail(new Error('offline'));await screen.findByRole('heading',{name:'Completion not saved'});
+ expect(screen.getByRole('status').textContent).toContain('not been confirmed saved');expect(screen.queryByText('Lesson complete!')).toBeNull();
+ expect((screen.getByRole('button',{name:'Leave without saving'}) as HTMLButtonElement).disabled).toBe(false);
+ fireEvent.click(screen.getByRole('button',{name:'Retry saving'}));expect(screen.queryByRole('button',{name:'Back to my journey'})).toBeNull();
+ finish();await screen.findByRole('heading',{name:'Lesson complete!'});
+ expect(screen.getByRole('status').textContent).toContain('Completion saved');fireEvent.click(screen.getByRole('button',{name:'Back to my journey'}));expect(close).toHaveBeenCalledOnce();
+});
+
+it.each(Object.entries(learningCourses).flatMap(([language,course])=>course.units.flatMap((unit,index)=>unit.lessons.filter(lesson=>lesson.sourceIds).map(content=>({language:language as 'yoruba'|'igbo'|'hausa',unitNumber:index+1,content})))))('plays $language / $content.title through the shared player',async({language,unitNumber,content})=>{
+ const save=vi.fn().mockResolvedValue(undefined);render(<Lesson language={language} unitNumber={unitNumber} content={content} onClose={()=>{}} onComplete={save}/>);
+ expect(screen.getByText(`${{yoruba:'Yorùbá',igbo:'Igbo',hausa:'Hausa'}[language]} · Unit ${unitNumber}`)).toBeTruthy();
+ for(const [index,exercise] of content.exercises.entries()){
+  fireEvent.click(screen.getByRole('button',{name:exercise.answer}));expect(screen.getByRole('status').textContent).toContain('Correct!');
+  fireEvent.click(screen.getByRole('button',{name:index===3?'Finish lesson':'Next exercise'}));
+ }
+ await waitFor(()=>expect(save).toHaveBeenCalledWith(content.exercises.map(exercise=>exercise.options.indexOf(exercise.answer))));
+ expect(screen.getByText('4 of 4 correct on your first choice. Keep practising!')).toBeTruthy();
 });

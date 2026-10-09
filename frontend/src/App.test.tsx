@@ -3,7 +3,7 @@ import React from 'react';
 import {render,screen,fireEvent,cleanup,waitFor} from '@testing-library/react';
 import {afterEach,beforeEach,describe,it,expect,vi} from 'vitest';
 import {App} from './App';
-beforeEach(()=>{localStorage.clear();vi.stubGlobal('matchMedia',()=>({matches:false}));vi.stubGlobal('fetch',vi.fn().mockResolvedValue({ok:false,status:401}));history.replaceState(null,'','/')});
+beforeEach(()=>{localStorage.clear();sessionStorage.clear();vi.stubGlobal('matchMedia',()=>({matches:false}));vi.stubGlobal('fetch',vi.fn().mockResolvedValue({ok:false,status:401}));history.replaceState(null,'','/')});
 afterEach(()=>{cleanup();vi.unstubAllGlobals()});
 describe('landing experience',()=>{
  it('switches all three language worlds and keeps the premium headline',async()=>{render(<App/>);await waitFor(()=>expect((screen.getByRole('combobox') as HTMLSelectElement).disabled).toBe(false));expect(screen.getByRole('heading',{level:1}).textContent).toContain('Learn the languages.');fireEvent.click(screen.getByRole('button',{name:'Explore Igbo'}));expect((screen.getByRole('combobox') as HTMLSelectElement).value).toBe('igbo');expect(screen.getAllByText('Nnọọ!').length).toBeGreaterThan(0);fireEvent.change(screen.getByRole('combobox'),{target:{value:'hausa'}});expect(screen.getAllByText('Sannu!').length).toBeGreaterThan(0);fireEvent.click(screen.getByRole('button',{name:'Explore Yorùbá'}));expect((screen.getByRole('combobox') as HTMLSelectElement).value).toBe('yoruba')});
@@ -45,9 +45,9 @@ it('opens the real Yoruba lesson from the dashboard without saving progress',asy
  fireEvent.click(screen.getByRole('button',{name:'Continue the journey'}));
  expect(screen.getByRole('dialog').textContent).toContain('A Warm Welcome');
  expect(screen.queryByRole('button',{name:'Practise with Adé'})).toBeNull();
- expect((screen.getByRole('button',{name:'Everyday greetings, locked'}) as HTMLButtonElement).disabled).toBe(true);
+ expect((screen.getByRole('button',{name:'Everyday Greetings, locked'}) as HTMLButtonElement).disabled).toBe(true);
  fireEvent.click(screen.getByRole('button',{name:'Close lesson'}));
- fireEvent.click(screen.getByRole('button',{name:'A warm welcome, current'}));
+ fireEvent.click(screen.getByRole('button',{name:'A Warm Welcome, current'}));
  expect(screen.getByRole('dialog').textContent).toContain('Exercise 1 of 4');
  expect(requests).toHaveBeenCalledTimes(2);
 });
@@ -57,13 +57,13 @@ it('restores real completion and XP on the Yoruba dashboard',async()=>{
  render(<App/>);await screen.findByRole('button',{name:'Sign out'});
  fireEvent.click(screen.getAllByRole('button',{name:'Continue learning'})[0]);
  await screen.findByRole('heading',{name:'Your Yorùbá journey'});
- expect(screen.getByRole('button',{name:'A warm welcome, completed'})).toBeTruthy();
- expect(screen.getByText('50% · 10 XP')).toBeTruthy();
+ expect(screen.getByRole('button',{name:'A Warm Welcome, completed'})).toBeTruthy();
+ expect(screen.getByText('10 course XP')).toBeTruthy();
  expect(screen.getByRole('button',{name:'Practise with Adé'})).toBeTruthy();
- expect((screen.getByRole('button',{name:'Everyday greetings, current'}) as HTMLButtonElement).disabled).toBe(false);
+ expect((screen.getByRole('button',{name:'Everyday Greetings, current'}) as HTMLButtonElement).disabled).toBe(false);
  fireEvent.click(screen.getByRole('button',{name:'Continue the journey'}));
  expect(screen.getByRole('dialog').textContent).toContain('Everyday Greetings');
- expect(screen.getByText('1 of 2 available lessons complete')).toBeTruthy();
+ expect(screen.getByText('1 of 5 available lessons complete')).toBeTruthy();
  expect(screen.queryByText('2 of 8 lessons complete · demo')).toBeNull();
 });
 
@@ -72,9 +72,9 @@ it('shows both completed lessons and 20 XP from real progress',async()=>{
  render(<App/>);await screen.findByRole('button',{name:'Sign out'});
  fireEvent.click(screen.getAllByRole('button',{name:'Continue learning'})[0]);
  await screen.findByRole('heading',{name:'Your Yorùbá journey'});
- expect(screen.getByText('100% · 20 XP')).toBeTruthy();
- expect(screen.getByText('2 of 2 available lessons complete')).toBeTruthy();
- expect(screen.getByRole('button',{name:'Everyday greetings, completed'})).toBeTruthy();
+ expect(screen.getByText('20 course XP')).toBeTruthy();
+ expect(screen.getByText('2 of 5 available lessons complete')).toBeTruthy();
+ expect(screen.getByRole('button',{name:'Everyday Greetings, completed'})).toBeTruthy();
 });
 
 it('keeps Yoruba and Igbo progress separate while completing the Igbo lesson',async()=>{
@@ -84,8 +84,8 @@ it('keeps Yoruba and Igbo progress separate while completing the Igbo lesson',as
  .mockResolvedValueOnce({ok:true}).mockResolvedValueOnce({ok:true,json:async()=>({total_xp:20,completions:[yoruba,igbo]})}).mockResolvedValue({ok:true});
  vi.stubGlobal('fetch',requests);render(<App/>);await screen.findByRole('button',{name:'Sign out'});
  fireEvent.click(screen.getAllByRole('button',{name:'Continue learning'})[0]);await screen.findByRole('heading',{name:'Your Igbo journey'});
- expect(screen.getByText('0% · 0 XP')).toBeTruthy();
- expect((screen.getByRole('button',{name:'How are you?, locked'}) as HTMLButtonElement).disabled).toBe(true);
+ expect(screen.getByText('0 course XP')).toBeTruthy();
+ expect((screen.getByRole('button',{name:'Everyday Greetings, locked'}) as HTMLButtonElement).disabled).toBe(true);
  fireEvent.click(screen.getByRole('button',{name:'Continue the journey'}));
  expect(screen.getByText('Igbo · Unit 1')).toBeTruthy();
  for(const choice of ['Nnọọ','Ndewo','Kedu?','Ọ dị mma']){
@@ -95,11 +95,11 @@ it('keeps Yoruba and Igbo progress separate while completing the Igbo lesson',as
  await waitFor(()=>expect(screen.getByRole('status').textContent).toContain('Completion saved'));
  expect(requests).toHaveBeenCalledWith('/api/learning/igbo/a-warm-welcome/complete',expect.objectContaining({body:JSON.stringify({answers:[0,2,1,0]})}));
  fireEvent.click(screen.getByRole('button',{name:'Back to my journey'}));
- expect(screen.getByText('100% · 10 XP')).toBeTruthy();
- expect(screen.getByRole('button',{name:'A warm welcome, completed'})).toBeTruthy();
+ expect(screen.getByText('10 course XP')).toBeTruthy();
+ expect(screen.getByRole('button',{name:'A Warm Welcome, completed'})).toBeTruthy();
  fireEvent.change(screen.getByRole('combobox'),{target:{value:'yoruba'}});
  await screen.findByRole('heading',{name:'Your Yorùbá journey'});
- expect(screen.getByText('50% · 10 XP')).toBeTruthy();
+ expect(screen.getByText('10 course XP')).toBeTruthy();
 });
 
 it('completes Hausa independently and preserves Igbo and Yoruba dashboard progress',async()=>{
@@ -108,8 +108,8 @@ it('completes Hausa independently and preserves Igbo and Yoruba dashboard progre
  .mockResolvedValueOnce({ok:true}).mockResolvedValueOnce({ok:true,json:async()=>({total_xp:30,completions:[...records,{...records[0],language:'hausa'}]})}).mockResolvedValue({ok:true});
  vi.stubGlobal('fetch',requests);render(<App/>);await screen.findByRole('button',{name:'Sign out'});
  fireEvent.click(screen.getAllByRole('button',{name:'Continue learning'})[0]);await screen.findByRole('heading',{name:'Your Hausa journey'});
- expect(screen.getByText('0% · 0 XP')).toBeTruthy();
- expect((screen.getByRole('button',{name:'Welcome a friend, locked'}) as HTMLButtonElement).disabled).toBe(true);
+ expect(screen.getByText('0 course XP')).toBeTruthy();
+ expect((screen.getByRole('button',{name:'Everyday Greetings, locked'}) as HTMLButtonElement).disabled).toBe(true);
  fireEvent.click(screen.getByRole('button',{name:'Continue the journey'}));
  expect(screen.getByText('Hausa · Unit 1')).toBeTruthy();
  for(const [i,choice] of ['Sannu da zuwa','Sannu','Ina kwana?','Lafiya lau'].entries()){
@@ -118,8 +118,8 @@ it('completes Hausa independently and preserves Igbo and Yoruba dashboard progre
  }
  await waitFor(()=>expect(screen.getByRole('status').textContent).toContain('Completion saved'));
  expect(requests).toHaveBeenCalledWith('/api/learning/hausa/a-warm-welcome/complete',expect.objectContaining({body:JSON.stringify({answers:[1,0,2,1]})}));
- fireEvent.click(screen.getByRole('button',{name:'Back to my journey'}));expect(screen.getByText('100% · 10 XP')).toBeTruthy();
- for(const [language,name,progress] of [['yoruba','Yorùbá','50% · 10 XP'],['igbo','Igbo','100% · 10 XP']]){
+ fireEvent.click(screen.getByRole('button',{name:'Back to my journey'}));expect(screen.getByText('10 course XP')).toBeTruthy();
+ for(const [language,name,progress] of [['yoruba','Yorùbá','10 course XP'],['igbo','Igbo','10 course XP']]){
   fireEvent.change(screen.getByRole('combobox'),{target:{value:language}});
   await screen.findByRole('heading',{name:`Your ${name} journey`});expect(screen.getByText(progress)).toBeTruthy();
  }
@@ -139,10 +139,10 @@ it('shows global level progress while course XP remains separate after switching
  render(<App/>);await screen.findByRole('button',{name:'Sign out'});
  fireEvent.click(screen.getAllByRole('button',{name:'Continue learning'})[0]);await screen.findByRole('heading',{name:'Your Yorùbá journey'});
  expect(screen.getByText('Level 2')).toBeTruthy();expect(screen.getByText('20 total XP')).toBeTruthy();
- expect(screen.getByText('50% · 10 XP')).toBeTruthy();
+ expect(screen.getByText('10 course XP')).toBeTruthy();
  expect(screen.getByRole('progressbar',{name:'Progress toward next level'}).getAttribute('aria-valuenow')).toBe('0');
  fireEvent.change(screen.getByRole('combobox'),{target:{value:'hausa'}});await screen.findByRole('heading',{name:'Your Hausa journey'});
- expect(screen.getByText('Level 2')).toBeTruthy();expect(screen.getByText('20 total XP')).toBeTruthy();expect(screen.getByText('0% · 0 XP')).toBeTruthy();
+ expect(screen.getByText('Level 2')).toBeTruthy();expect(screen.getByText('20 total XP')).toBeTruthy();expect(screen.getByText('0 course XP')).toBeTruthy();
 });
 
 it('unlocks practice only for the selected completed language',async()=>{
@@ -153,4 +153,62 @@ it('unlocks practice only for the selected completed language',async()=>{
  expect(screen.queryByRole('button',{name:'Practise with Amina'})).toBeNull();
  fireEvent.change(screen.getByRole('combobox'),{target:{value:'yoruba'}});await screen.findByRole('heading',{name:'Your Yorùbá journey'});
  expect(screen.queryByRole('button',{name:'Practise with Adé'})).toBeNull();
+});
+
+
+it('has no false demo activity or stale reward claims',async()=>{
+ const requests=vi.fn().mockResolvedValueOnce({ok:true,json:async()=>({id:'123',display_name:'Ada',preferred_language:'yoruba',progress:{total_xp:0,completions:[]}})}).mockResolvedValue({ok:true});
+ vi.stubGlobal('fetch',requests);const {container}=render(<App/>);await screen.findByRole('button',{name:'Sign out'});
+ expect(container.textContent).not.toMatch(/demo|sample|preview|interactive lessons coming next|backend reward logic is not active|achievements/i);
+ expect(screen.getAllByText(/Coming later/i).length).toBeGreaterThan(0);
+ expect(container.querySelector('.finished')).toBeNull();
+ fireEvent.click(screen.getAllByRole('button',{name:'Continue learning'})[0]);await screen.findByRole('heading',{name:'Your Yorùbá journey'});
+ expect(container.textContent).not.toMatch(/demo|sample|preview/i);
+ expect(container.querySelector('.week')).toBeNull();
+ expect(screen.queryByRole('link',{name:'Go to conversation practice'})).toBeNull();
+});
+
+it.each([['yoruba','Yorùbá',5],['igbo','Igbo',5],['hausa','Hausa',5]])('honestly ends available %s content without silently replaying',async(language,name,size)=>{
+ const completions=['a-warm-welcome','everyday-greetings','introduce-yourself','family-and-people','food-and-drink'].map(lesson_id=>({language,lesson_id,status:'completed',first_choice_score:4,completed_at:'2026-10-08',xp:10}));
+ vi.stubGlobal('fetch',vi.fn().mockResolvedValueOnce({ok:true,json:async()=>({id:'123',display_name:'Ada',preferred_language:language,progress:{total_xp:size*10,completions}})}).mockResolvedValue({ok:true}));
+ const scroll=vi.fn();Object.defineProperty(HTMLElement.prototype,'scrollIntoView',{configurable:true,value:scroll});
+ render(<App/>);await screen.findByRole('button',{name:'Sign out'});fireEvent.click(screen.getAllByRole('button',{name:'Continue learning'})[0]);await screen.findByRole('heading',{name:`Your ${name} journey`});
+ expect(screen.queryByRole('button',{name:'Continue the journey'})).toBeNull();
+ expect(screen.getByRole('link',{name:'Go to conversation practice'}).getAttribute('href')).toBe('#conversation-practice');
+ const progress=screen.getByRole('progressbar',{name:'Available lesson progress'});
+ expect(progress.getAttribute('aria-valuemax')).toBe(String(size));expect(progress.getAttribute('aria-valuenow')).toBe(String(size));
+ expect(document.body.textContent).not.toContain('100%');expect(screen.queryByText('COMING LATER')).toBeNull();
+ fireEvent.click(screen.getByRole('button',{name:'Practise conversation'}));expect(scroll).toHaveBeenCalledOnce();expect(screen.queryByRole('dialog')).toBeNull();
+ fireEvent.click(screen.getByRole('button',{name:'A Warm Welcome, completed'}));expect(screen.getByRole('dialog')).toBeTruthy();
+});
+
+it.each(['igbo','hausa'])('preserves anonymous %s selection across Google redirect and enrolls after sign-in',async language=>{
+ vi.stubGlobal('fetch',vi.fn().mockResolvedValue({ok:false,status:401}));render(<App/>);
+ await waitFor(()=>expect((screen.getByRole('combobox') as HTMLSelectElement).disabled).toBe(false));
+ fireEvent.change(screen.getByRole('combobox'),{target:{value:language}});expect(sessionStorage.getItem('lingonaija.pendingLanguage')).toBe(language);cleanup();
+ history.replaceState(null,'','/?signed_in=1');const requests=vi.fn().mockResolvedValueOnce({ok:true,json:async()=>({id:'123',display_name:'Ada',preferred_language:'yoruba'})}).mockResolvedValue({ok:true});vi.stubGlobal('fetch',requests);
+ render(<App/>);await screen.findByRole('heading',{name:`Your ${language==='igbo'?'Igbo':'Hausa'} journey`});
+ expect(requests).toHaveBeenCalledWith('/api/enrollments',expect.objectContaining({body:JSON.stringify({language})}));
+ expect(sessionStorage.getItem('lingonaija.pendingLanguage')).toBeNull();expect(location.search).toBe('');
+});
+
+it('retains the chosen language and allows retry when post-login enrollment fails',async()=>{
+ sessionStorage.setItem('lingonaija.pendingLanguage','hausa');history.replaceState(null,'','/?signed_in=1');
+ const requests=vi.fn().mockResolvedValueOnce({ok:true,json:async()=>({id:'123',display_name:'Ada',preferred_language:'yoruba'})}).mockResolvedValueOnce({ok:false,status:503}).mockResolvedValue({ok:true});vi.stubGlobal('fetch',requests);
+ render(<App/>);await screen.findByText(/Signed in, but your selected language could not be saved/);
+ expect((screen.getByRole('combobox') as HTMLSelectElement).value).toBe('hausa');expect(sessionStorage.getItem('lingonaija.pendingLanguage')).toBe('hausa');
+ fireEvent.click(screen.getAllByRole('button',{name:'Continue learning'})[0]);await screen.findByRole('heading',{name:'Your Hausa journey'});expect(sessionStorage.getItem('lingonaija.pendingLanguage')).toBeNull();
+});
+
+
+it.each([['yoruba','Yorùbá'],['igbo','Igbo'],['hausa','Hausa']])('opens Unit 2 only after the three %s starter lessons',async(language,name)=>{
+ const completions=['a-warm-welcome','everyday-greetings','introduce-yourself'].map(lesson_id=>({language,lesson_id,status:'completed',first_choice_score:4,completed_at:'2026-10-09',xp:10}));
+ vi.stubGlobal('fetch',vi.fn().mockResolvedValueOnce({ok:true,json:async()=>({id:'123',display_name:'Ada',preferred_language:language,progress:{total_xp:30,completions}})}).mockResolvedValue({ok:true}));
+ render(<App/>);await screen.findByRole('button',{name:'Sign out'});fireEvent.click(screen.getAllByRole('button',{name:'Continue learning'})[0]);await screen.findByRole('heading',{name:`Your ${name} journey`});
+ expect(screen.getByRole('heading',{name:'Getting Started'})).toBeTruthy();expect(screen.getByRole('heading',{name:'Everyday Life'})).toBeTruthy();
+ expect(screen.getByText('3 of 5 available lessons complete')).toBeTruthy();
+ expect((screen.getByRole('button',{name:'Food & Drink, locked'}) as HTMLButtonElement).disabled).toBe(true);
+ expect(screen.getByText('Complete Family & People to unlock')).toBeTruthy();
+ fireEvent.click(screen.getByRole('button',{name:'Continue the journey'}));
+ expect(screen.getByRole('dialog').textContent).toContain('Family & People');expect(screen.getByText(`${name} · Unit 2`)).toBeTruthy();
 });

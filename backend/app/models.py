@@ -32,7 +32,7 @@ class LessonCompletion(Base):
     __tablename__ = "lesson_completions"
     __table_args__ = (
         ForeignKeyConstraint(['user_id', 'language'], ['enrollments.user_id', 'enrollments.language'], ondelete='CASCADE'),
-        CheckConstraint("(language = 'yoruba' AND lesson_id IN ('a-warm-welcome', 'everyday-greetings')) OR (language = 'igbo' AND lesson_id = 'a-warm-welcome') OR (language = 'hausa' AND lesson_id = 'a-warm-welcome')", name='ck_completion_lesson'),
+        CheckConstraint("language IN ('yoruba', 'igbo', 'hausa') AND lesson_id IN ('a-warm-welcome', 'everyday-greetings', 'introduce-yourself', 'family-and-people', 'food-and-drink')", name='ck_completion_lesson'),
         CheckConstraint('first_choice_score BETWEEN 0 AND 4 AND xp = 10', name='ck_completion_score_xp'),
     )
     user_id: Mapped[uuid.UUID] = mapped_column(primary_key=True)

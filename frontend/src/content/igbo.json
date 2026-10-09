@@ -1,0 +1,225 @@
+[
+  {
+    "id": "everyday-greetings",
+    "title": "Everyday Greetings",
+    "introduction": "Greet people through the day and say good night. These common forms are useful starting points; local greetings also vary.",
+    "summary": "You practised morning, afternoon and evening greetings, and a good-night farewell.",
+    "sourceIds": [
+      "igbo-nkenne",
+      "igbo-phrases"
+    ],
+    "exercises": [
+      {
+        "id": "morning-neighbour",
+        "prompt": "It is 8 a.m. and you meet a neighbour outside. Choose the common good-morning expression.",
+        "options": [
+          "Mgbede ọma",
+          "Ụtụtụ ọma",
+          "Ka chi foo"
+        ],
+        "answer": "Ụtụtụ ọma",
+        "explanation": "Ụtụtụ ọma means good morning. Communities also use other morning greetings."
+      },
+      {
+        "id": "afternoon-arrival",
+        "prompt": "You arrive for a friendly visit after lunch. Which time-of-day greeting fits the afternoon?",
+        "options": [
+          "Ehihie ọma",
+          "Ụtụtụ ọma",
+          "Ka chi foo"
+        ],
+        "answer": "Ehihie ọma",
+        "explanation": "Ehihie ọma is a common good-afternoon expression."
+      },
+      {
+        "id": "evening-chat",
+        "prompt": "It is evening and you meet a friend for a chat. Which greeting fits this time of day?",
+        "options": [
+          "Ehihie ọma",
+          "Ụtụtụ ọma",
+          "Mgbede ọma"
+        ],
+        "answer": "Mgbede ọma",
+        "explanation": "Mgbede ọma means good evening. It greets someone rather than ends a bedtime conversation."
+      },
+      {
+        "id": "good-night",
+        "prompt": "After the evening chat, you and your friend are going to bed. Choose a good-night farewell.",
+        "options": [
+          "Ụtụtụ ọma",
+          "Ka chi foo",
+          "Ehihie ọma"
+        ],
+        "answer": "Ka chi foo",
+        "explanation": "Ka chi foo is a good-night expression, a wish for day to break."
+      }
+    ]
+  },
+  {
+    "id": "introduce-yourself",
+    "title": "Introduce Yourself",
+    "introduction": "Introduce your name, ask someone else’s name and share a little about yourself.",
+    "summary": "You practised exchanging names, saying you are a student and saying you speak Igbo.",
+    "sourceIds": [
+      "igbo-introductions"
+    ],
+    "exercises": [
+      {
+        "id": "share-name",
+        "prompt": "You join a new study group. Your name is Ada. Choose your introduction.",
+        "options": [
+          "Aha m bụ Ada",
+          "Kedụ aha gị?",
+          "Ọ dị mma"
+        ],
+        "answer": "Aha m bụ Ada",
+        "explanation": "Aha m bụ ... introduces your name. Here the name is Ada."
+      },
+      {
+        "id": "ask-name",
+        "prompt": "A new classmate has greeted you but has not said their name. How do you ask it?",
+        "options": [
+          "Aha m bụ Ada",
+          "M bụ nwa akwụkwọ",
+          "Kedụ aha gị?"
+        ],
+        "answer": "Kedụ aha gị?",
+        "explanation": "Kedụ aha gị? asks what your name is. Gị means your here."
+      },
+      {
+        "id": "student",
+        "prompt": "At a campus event, someone asks about you. Choose the statement that says you are a student.",
+        "options": [
+          "Aha m bụ Ada",
+          "M bụ nwa akwụkwọ",
+          "M na-esi nri"
+        ],
+        "answer": "M bụ nwa akwụkwọ",
+        "explanation": "M bụ nwa akwụkwọ means I am a student."
+      },
+      {
+        "id": "spoken-language",
+        "prompt": "During an introduction, a friend says “M na-asụ Igbo.” What have they told you?",
+        "options": [
+          "They speak Igbo",
+          "Their name is Igbo",
+          "They are cooking food"
+        ],
+        "answer": "They speak Igbo",
+        "explanation": "M na-asụ Igbo means I speak Igbo. The speaker is describing a language they speak."
+      }
+    ]
+  },
+  {
+    "id": "family-and-people",
+    "title": "Family & People",
+    "introduction": "Introduce a parent or friend and understand who someone is talking about in their family.",
+    "summary": "You practised introducing your mother, naming your father or friend and recognising a reference to both parents.",
+    "sourceIds": [
+      "igbo-family",
+      "igbo-introductions"
+    ],
+    "exercises": [
+      {
+        "id": "mother-introduction",
+        "prompt": "Your mother joins you while you are chatting with a friend. Choose the statement that introduces her.",
+        "options": [
+          "Aha enyi m bụ Ada",
+          "Nke a bụ nne m",
+          "M bụ nwa akwụkwọ"
+        ],
+        "answer": "Nke a bụ nne m",
+        "explanation": "Nke a bụ nne m means this is my mother."
+      },
+      {
+        "id": "father-name",
+        "prompt": "Your father’s name is Obi. A visitor asks his name. Which statement answers them?",
+        "options": [
+          "Aha nna m bụ Obi",
+          "Aha m bụ Ada",
+          "Nke a bụ nne m"
+        ],
+        "answer": "Aha nna m bụ Obi",
+        "explanation": "Aha nna m bụ Obi means my father’s name is Obi."
+      },
+      {
+        "id": "parents",
+        "prompt": "A friend mentions “Nne m na nna m” when talking about who is visiting. Who are they talking about?",
+        "options": [
+          "Only their mother",
+          "Their friend Ada",
+          "Their mother and father"
+        ],
+        "answer": "Their mother and father",
+        "explanation": "Nne m na nna m means my mother and my father. Na joins the two people here."
+      },
+      {
+        "id": "friend-introduction",
+        "prompt": "You are talking about your friend Ada to someone who has not met her. Choose the statement that gives your friend’s name.",
+        "options": [
+          "Aha nna m bụ Obi",
+          "Aha enyi m bụ Ada",
+          "Nke a bụ nne m"
+        ],
+        "answer": "Aha enyi m bụ Ada",
+        "explanation": "Aha enyi m bụ Ada means my friend’s name is Ada."
+      }
+    ]
+  },
+  {
+    "id": "food-and-drink",
+    "title": "Food & Drink",
+    "introduction": "At a friend’s home, express hunger or thirst, talk about cooking and wish someone an enjoyable meal.",
+    "summary": "You practised saying you are hungry or thirsty, describing cooking and wishing someone an enjoyable meal.",
+    "sourceIds": [
+      "igbo-food",
+      "igbo-phrases"
+    ],
+    "exercises": [
+      {
+        "id": "hungry",
+        "prompt": "You have not eaten yet. Your host asks how you feel. Choose the expression that says you are hungry.",
+        "options": [
+          "Agụụ na-agụ m",
+          "Mmiri na-agụ m",
+          "M na-esi nri"
+        ],
+        "answer": "Agụụ na-agụ m",
+        "explanation": "Agụụ na-agụ m means I am hungry. It tells your host that you need food."
+      },
+      {
+        "id": "thirsty",
+        "prompt": "After a walk, you need a drink rather than food. What can you say to your host?",
+        "options": [
+          "Agụụ na-agụ m",
+          "Mmiri na-agụ m",
+          "Rie nke ọma"
+        ],
+        "answer": "Mmiri na-agụ m",
+        "explanation": "Mmiri na-agụ m means I am thirsty. Mmiri is water."
+      },
+      {
+        "id": "cooking",
+        "prompt": "A friend finds you in the kitchen and asks what you are doing. Choose the statement that says you are cooking food.",
+        "options": [
+          "Mmiri na-agụ m",
+          "Agụụ na-agụ m",
+          "M na-esi nri"
+        ],
+        "answer": "M na-esi nri",
+        "explanation": "M na-esi nri means I am cooking food."
+      },
+      {
+        "id": "meal-wish",
+        "prompt": "Your friend is about to eat the meal you have shared. Choose the expression that wishes them an enjoyable meal.",
+        "options": [
+          "Nnọọ",
+          "Rie nke ọma",
+          "Kedụ aha gị?"
+        ],
+        "answer": "Rie nke ọma",
+        "explanation": "Rie nke ọma is used to wish someone an enjoyable meal."
+      }
+    ]
+  }
+]

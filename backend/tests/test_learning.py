@@ -84,7 +84,7 @@ def test_igbo_completion_language_user_isolation_and_replay(enrollment_db):
     assert other.get('/api/auth/me').json()['progress']['total_xp']==0
     assert other.post(endpoint,json={'answers':[0,2,1,0]},headers={'Origin':get_settings().frontend_url}).status_code==200
     assert client.get('/api/auth/me').json()['progress']==restored
-    assert client.post('/api/learning/igbo/everyday-greetings/complete',json={'answers':[0,2,1,0]},headers={'Origin':get_settings().frontend_url}).status_code==404
+    assert client.post('/api/learning/igbo/unknown/complete',json={'answers':[0,2,1,0]},headers={'Origin':get_settings().frontend_url}).status_code==404
 
 def test_hausa_completion_replay_and_all_language_isolation(enrollment_db):
     db=enrollment_db;client,user=client_for(db,'hausa@example.test');post(client,'yoruba')
@@ -107,4 +107,56 @@ def test_hausa_completion_replay_and_all_language_isolation(enrollment_db):
     assert other.get('/api/auth/me').json()['progress']['total_xp']==0
     assert other.post(endpoint,json={'answers':[1,0,2,1]},headers={'Origin':get_settings().frontend_url}).status_code==200
     assert client.get('/api/auth/me').json()['progress']==data
-    assert client.post('/api/learning/hausa/everyday-greetings/complete',json={'answers':[1,0,2,1]},headers={'Origin':get_settings().frontend_url}).status_code==404
+    assert client.post('/api/learning/hausa/unknown/complete',json={'answers':[1,0,2,1]},headers={'Origin':get_settings().frontend_url}).status_code==404
+
+@pytest.mark.parametrize('language',['yoruba','igbo','hausa'])
+def test_five_lesson_sequence_and_immutable_first_completion(enrollment_db,language):
+    from app.learning import LESSON_IDS, ANSWER_KEYS
+    client,user=client_for(enrollment_db,language+'sequence@example.test');post(client,language)
+    headers={'Origin':get_settings().frontend_url}
+    def complete(lesson,answers):
+        return client.post(f'/api/learning/{language}/{lesson}/complete',json={'answers':list(answers)},headers=headers)
+    for index,lesson in enumerate(LESSON_IDS):
+        for later in LESSON_IDS[index+1:]:
+            assert complete(later,ANSWER_KEYS[(language,later)]).status_code==409
+        key=ANSWER_KEYS[(language,lesson)]
+        imperfect=((key[0]+1)%3,*key[1:])
+        result=complete(lesson,imperfect);assert result.status_code==200
+        data=result.json();assert data['total_xp']==(index+1)*10
+        row=next(row for row in data['completions'] if row['lesson_id']==lesson)
+        assert row['first_choice_score']==3 and row['xp']==10 and row['completed_at']
+        assert complete(lesson,key).json()==data
+    assert enrollment_db.scalar(select(func.count()).select_from(LessonCompletion))==5
+    assert client.get('/api/auth/me').json()['progress']['total_xp']==50
+
+
+def test_expanded_curriculum_keeps_languages_and_users_independent(enrollment_db):
+    from app.learning import LESSON_IDS, ANSWER_KEYS
+    client,_=client_for(enrollment_db,'allcourses@example.test')
+    headers={'Origin':get_settings().frontend_url}
+    for language in ('yoruba','igbo','hausa'):
+        post(client,language)
+        # Previous-language completions never unlock this language's last lesson.
+        assert client.post(f'/api/learning/{language}/food-and-drink/complete',json={'answers':list(ANSWER_KEYS[(language,'food-and-drink')])},headers=headers).status_code==409
+        for lesson in LESSON_IDS:
+            assert client.post(f'/api/learning/{language}/{lesson}/complete',json={'answers':list(ANSWER_KEYS[(language,lesson)])},headers=headers).status_code==200
+    data=client.get('/api/auth/me').json()['progress']
+    assert data['total_xp']==150 and len(data['completions'])==15
+    for language in ('yoruba','igbo','hausa'):
+        assert sum(row['xp'] for row in data['completions'] if row['language']==language)==50
+    other,_=client_for(enrollment_db,'newlearner@example.test');post(other,'igbo')
+    assert other.get('/api/auth/me').json()['progress']['total_xp']==0
+    assert other.post('/api/learning/igbo/everyday-greetings/complete',json={'answers':[1,0,2,1]},headers=headers).status_code==409
+    assert client.get('/api/auth/me').json()['progress']==data
+
+
+def test_new_published_content_matches_server_scoring_keys():
+    import json
+    from pathlib import Path
+    from app.learning import LESSON_IDS, ANSWER_KEYS
+    assert len(ANSWER_KEYS)==15
+    content_dir=Path(__file__).resolve().parents[2]/'frontend'/'src'/'content'
+    for language in ('yoruba','igbo','hausa'):
+        for lesson in json.loads((content_dir/(language+'.json')).read_text(encoding='utf-8')):
+            assert len(lesson['exercises'])==4 and lesson['sourceIds']
+            assert tuple(exercise['options'].index(exercise['answer']) for exercise in lesson['exercises'])==ANSWER_KEYS[(language,lesson['id'])]
