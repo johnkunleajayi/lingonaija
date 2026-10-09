@@ -1,0 +1,55 @@
+/* Landing language showcase only; shared portraits and other sections are unchanged. */
+.app .landing .language-showcase {max-width: 1310px; margin: auto; padding: 80px 40px 72px;}
+.app .landing .language-showcase-heading {max-width: 780px; margin: 0 auto 40px; text-align: center;}
+.app .landing .language-showcase-heading h2 {font-size: clamp(30px, 3.2vw, 44px); line-height: 1.15; letter-spacing: -1.5px; margin: 0 0 18px; color: #143528;}
+.app .landing .language-showcase-heading p {font-size: 17px; line-height: 1.75; color: #55695d; margin: 0;}
+.app .landing .language-showcase-grid {display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 24px;}
+.app .landing .showcase-card {--world-surface: #f4eadc; --world-ink: #885e38; --world-line: #d8bf9d; display: flex; flex-direction: column; min-width: 0; border-radius: 24px; border: 1px solid #dfe9e2; overflow: hidden; background: #fff; box-shadow: 0 8px 30px #173e2408;}
+.app .landing .showcase-igbo {--world-surface: #f3e9eb; --world-ink: #87516a; --world-line: #d8bac8;}
+.app .landing .showcase-hausa {--world-surface: #e6efed; --world-ink: #376e66; --world-line: #adcbc4;}
+.app .landing .showcase-card.is-selected {border-color: #008753; box-shadow: 0 0 0 1px #008753, 0 8px 30px #173e2408;}
+.app .landing .showcase-portrait {height: 270px; position: relative; isolation: isolate; display: flex; align-items: flex-end; justify-content: center; background: var(--world-surface);}
+.app .landing .showcase-portrait .character {position: relative; width: 205px; height: 245px; margin: 0; z-index: 1;}
+.app .landing .showcase-pattern {position: absolute; inset: 20px; border: 1px solid var(--world-line); border-radius: 100px 100px 18px 18px; opacity: .5;}
+.app .landing .showcase-pattern::after {content: ''; position: absolute; bottom: 18px; left: 14px; width: 54px; height: 54px; background: repeating-linear-gradient(45deg, transparent 0 9px, var(--world-line) 9px 11px, transparent 11px 18px), repeating-linear-gradient(-45deg, transparent 0 9px, var(--world-line) 9px 11px, transparent 11px 18px); mask-image: linear-gradient(#000, transparent);}
+.app .landing .showcase-selected {position: absolute; top: 15px; right: 15px; z-index: 2; display: inline-flex; align-items: center; gap: 5px; font-size: 12px; font-weight: 700; color: #fff; background: #006c43; padding: 7px 11px; border-radius: 20px;}
+.app .landing .showcase-greeting {position: absolute; right: 18px; bottom: 18px; z-index: 2; padding: 10px 16px; border-radius: 14px; background: #fffffff2; border: 1px solid #ffffff; color: var(--world-ink); font-size: 21px; font-weight: 750; box-shadow: 0 4px 15px #16372310;}
+.app .landing .showcase-content {padding: 28px; display: flex; flex: 1; flex-direction: column;}
+.app .landing .showcase-content h3 {font-size: 29px; line-height: 1.15; letter-spacing: -.8px; margin: 0 0 8px; color: #143528;}
+.app .landing .showcase-companion {font-size: 13px; line-height: 1.6; color: var(--world-ink); margin: 0 0 18px;}
+.app .landing .showcase-description {font-size: 16px; line-height: 1.75; color: #55695d; margin: 0 0 25px;}
+.app .landing .showcase-content button {display: flex; align-items: center; justify-content: space-between; gap: 12px; width: 100%; margin-top: auto; min-height: 50px; padding: 13px 16px; border: 1px solid #cfe2d6; border-radius: 13px; background: #edf7f0; color: #006c43; font-size: 15px; font-weight: 750; transition: background .18s;}
+.app .landing .showcase-content button:hover:not(:disabled) {background: #dcefe3;}
+.app .landing .showcase-content button:disabled {opacity: .6; cursor: wait;}
+.app .landing .showcase-selection {text-align: center; font-size: 14px; color: #55695d; margin: 26px 0 0;}
+.app.dark .landing .language-showcase-heading h2,
+.app.dark .landing .showcase-content h3 {color: #f3f8f5;}
+.app.dark .landing .language-showcase-heading p,
+.app.dark .landing .showcase-description,
+.app.dark .landing .showcase-selection {color: #bfcec5;}
+.app.dark .landing .showcase-card {background: #193226; border-color: #2c4a39; --world-surface: #352f24; --world-ink: #e8cda6; --world-line: #826d4f;}
+.app.dark .landing .showcase-igbo {--world-surface: #352a31; --world-ink: #e1b9cb; --world-line: #846379;}
+.app.dark .landing .showcase-hausa {--world-surface: #203b35; --world-ink: #add9cc; --world-line: #507a6f;}
+.app.dark .landing .showcase-card.is-selected {border-color: #6ce6a9; box-shadow: 0 0 0 1px #6ce6a9;}
+.app.dark .landing .showcase-greeting {background: #172e26ed; border-color: #ffffff25;}
+.app.dark .landing .showcase-content button {background: #244c36; border-color: #396249; color: #98edbc;}
+.app.dark .landing .showcase-content button:hover:not(:disabled) {background: #2d5c41;}
+@media (max-width: 1000px) {
+  .app .landing .language-showcase {padding: 64px 28px;}
+  .app .landing .language-showcase-grid {gap: 16px;}
+  .app .landing .showcase-content {padding: 22px;}
+  .app .landing .showcase-portrait {height: 235px;}
+  .app .landing .showcase-portrait .character {width: 170px; height: 215px;}
+}
+@media (max-width: 760px) {
+  .app .landing .language-showcase {padding: 48px 20px;}
+  .app .landing .language-showcase-heading {text-align: left; margin-bottom: 28px;}
+  .app .landing .language-showcase-heading p {font-size: 16px;}
+  .app .landing .language-showcase-grid {grid-template-columns: minmax(0, 1fr); max-width: 480px; margin: auto; gap: 24px;}
+  .app .landing .showcase-portrait {height: 260px;}
+  .app .landing .showcase-portrait .character {width: 200px; height: 240px;}
+  .app .landing .showcase-content {padding: 24px;}
+}
+@media (prefers-reduced-motion: reduce) {
+  .app .landing .showcase-content button {transition: none;}
+}

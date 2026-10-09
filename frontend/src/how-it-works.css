@@ -1,0 +1,42 @@
+/* Only the connected journey section after the language showcase. */
+.app .landing .how-it-works {position: relative; isolation: isolate; overflow: hidden; padding: 72px 40px 88px; background: #f5faf6; border-block: 1px solid #e2ece5; color: #143528;}
+.app .landing .how-it-works::after {content: ''; position: absolute; z-index: -1; width: 130px; height: 130px; bottom: -25px; right: -25px; opacity: .45; background: repeating-linear-gradient(45deg, transparent 0 14px, #cfe4d6 14px 16px, transparent 16px 28px), repeating-linear-gradient(-45deg, transparent 0 14px, #cfe4d6 14px 16px, transparent 16px 28px); mask-image: linear-gradient(135deg, transparent, #000);}
+.app .landing .how-it-works-inner {max-width: 1180px; margin: auto;}
+.app .landing .how-it-works-heading {max-width: 760px; margin: 0 auto 48px; text-align: center;}
+.app .landing .how-it-works-label {display: block; font-size: 12px; line-height: 1.5; letter-spacing: 1.6px; text-transform: uppercase; font-weight: 750; color: #006c43; margin-bottom: 16px;}
+.app .landing .how-it-works-heading h2 {font-size: clamp(30px, 3.2vw, 44px); line-height: 1.16; letter-spacing: -1.5px; margin: 0 0 18px;}
+.app .landing .how-it-works-heading p {font-size: 17px; line-height: 1.75; color: #55695d; margin: 0;}
+.app .landing .how-it-works-path {display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); padding: 0; margin: 0; list-style: none; gap: 0;}
+.app .landing .how-it-works-step {position: relative; padding: 0 28px; text-align: center; min-width: 0;}
+.app .landing .how-it-works-step:not(:last-child)::after {content: ''; position: absolute; top: 43px; left: calc(50% + 52px); width: calc(100% - 104px); height: 2px; background: linear-gradient(to right, #008753, #a9d4b8);}
+.app .landing .how-it-works-step:not(:last-child)::before {content: ''; position: absolute; left: calc(150% - 60px); top: 39px; width: 10px; height: 10px; border-top: 2px solid #73ae87; border-right: 2px solid #73ae87; transform: rotate(45deg);}
+.app .landing .how-it-works-node {position: relative; display: grid; place-items: center; width: 88px; height: 88px; margin: 0 auto 27px; border-radius: 28px; color: #008753; background: #fff; border: 1px solid #cde3d4; box-shadow: 0 6px 20px #164b2c0a;}
+.app .landing .how-it-works-number {position: absolute; right: -8px; top: -8px; min-width: 31px; height: 31px; padding-inline: 5px; border-radius: 50%; display: grid; place-items: center; color: #fff; background: #006c43; border: 3px solid #f5faf6; font-size: 11px; font-weight: 800;}
+.app .landing .how-it-works-copy h3 {font-size: 22px; line-height: 1.3; letter-spacing: -.5px; margin: 0 0 12px;}
+.app .landing .how-it-works-copy p {font-size: 16px; line-height: 1.8; color: #55695d; margin: 0;}
+.app.dark .landing .how-it-works {background: #13291f; border-color: #294437; color: #f3f8f5;}
+.app.dark .landing .how-it-works::after {opacity: .12;}
+.app.dark .landing .how-it-works-label {color: #6ce6a9;}
+.app.dark .landing .how-it-works-heading p,
+.app.dark .landing .how-it-works-copy p {color: #bfcec5;}
+.app.dark .landing .how-it-works-node {background: #1c392b; color: #6ce6a9; border-color: #3c634b; box-shadow: none;}
+.app.dark .landing .how-it-works-number {background: #6ce6a9; color: #123b26; border-color: #13291f;}
+.app.dark .landing .how-it-works-step:not(:last-child)::after {background: linear-gradient(to right, #6ce6a9, #396249);}
+@media (max-width: 900px) {
+  .app .landing .how-it-works {padding: 60px 28px 72px;}
+  .app .landing .how-it-works-step {padding-inline: 16px;}
+}
+@media (max-width: 700px) {
+  .app .landing .how-it-works {padding: 48px 20px 52px;}
+  .app .landing .how-it-works-heading {text-align: left; margin-bottom: 36px;}
+  .app .landing .how-it-works-heading p {font-size: 16px;}
+  .app .landing .how-it-works-path {grid-template-columns: minmax(0, 1fr);}
+  .app .landing .how-it-works-step {display: grid; grid-template-columns: 68px minmax(0, 1fr); gap: 22px; padding: 0 0 36px; text-align: left;}
+  .app .landing .how-it-works-step:last-child {padding-bottom: 0;}
+  .app .landing .how-it-works-node {width: 68px; height: 68px; border-radius: 22px; margin: 0;}
+  .app .landing .how-it-works-step:not(:last-child)::after {left: 33px; top: 78px; width: 2px; height: calc(100% - 88px); background: linear-gradient(#008753, #a9d4b8);}
+  .app .landing .how-it-works-step:not(:last-child)::before {left: 30px; top: auto; bottom: 14px; width: 8px; height: 8px; transform: rotate(135deg);}
+  .app.dark .landing .how-it-works-step:not(:last-child)::after {background: linear-gradient(#6ce6a9, #396249);}
+  .app .landing .how-it-works-copy h3 {font-size: 21px; margin-top: 5px;}
+  .app .landing .how-it-works-copy p {font-size: 15px;}
+}

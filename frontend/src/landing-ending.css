@@ -1,0 +1,21 @@
+/* Final landing CTA and footer only. */
+.app .landing .landing-final {position: relative; padding: 80px 24px; text-align: center; background: #004b35; color: #fff;}
+.app .landing .landing-final-inner {max-width: 740px; margin: auto;}
+.app .landing .landing-final h2 {font-size: clamp(32px, 4vw, 52px); font-weight: 800; line-height: 1.15; letter-spacing: -1.6px; margin: 0 0 22px; color: #fff;}
+.app .landing .landing-final p {font-size: 18px; line-height: 1.7; color: #d0ebdc; margin: 0 0 30px;}
+.app .landing .landing-final button {display: inline-flex; align-items: center; justify-content: center; gap: 13px; min-height: 56px; padding: 16px 26px; border: 1px solid #fff; border-radius: 30px; background: #fff; color: #004b35; font-size: 16px; font-weight: 750; transition: background .18s;}
+.app .landing .landing-final button:hover:not(:disabled) {background: #e9f5ee;}
+.app .landing .landing-final button:disabled {opacity: .65; cursor: wait;}
+.app .landing .landing-footer {max-width: 1310px; margin: auto; padding: 34px 40px; display: flex; justify-content: space-between; align-items: center; gap: 28px; border: 0; color: #55695d;}
+.app .landing .landing-footer p {font-size: 14px; line-height: 1.7; margin: 0;}
+.app.dark .landing .landing-final {background: #003e2c;}
+.app.dark .landing .landing-footer {color: #bfcec5;}
+@media (max-width: 700px) {
+ .app .landing .landing-final {padding: 56px 20px;}
+ .app .landing .landing-final h2 {font-size: 35px; letter-spacing: -1px;}
+ .app .landing .landing-final p {font-size: 16px;}
+ .app .landing .landing-footer {padding: 30px 20px; flex-direction: column; text-align: center; gap: 20px;}
+}
+@media (prefers-reduced-motion: reduce) {
+ .app .landing .landing-final button {transition: none;}
+}

@@ -1,0 +1,49 @@
+/* Scope this presentation to the first section directly below the hero. */
+.app .landing .landing-features {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  padding: 64px 40px 72px;
+  background: #f7faf7;
+  border-block: 1px solid #e2ece5;
+  color: #143528;
+}
+.app .landing .landing-features::before {
+  content: '';
+  position: absolute;
+  z-index: -1;
+  right: -24px;
+  top: -24px;
+  width: 150px;
+  height: 150px;
+  opacity: .5;
+  background: repeating-linear-gradient(45deg, transparent 0 17px, #dfede3 17px 19px, transparent 19px 35px), repeating-linear-gradient(-45deg, transparent 0 17px, #dfede3 17px 19px, transparent 19px 35px);
+  mask-image: linear-gradient(225deg, #000, transparent 75%);
+}
+.app .landing .landing-features-inner {max-width: 1230px; margin-inline: auto;}
+.app .landing .landing-features-heading {max-width: 700px; margin: 0 auto 36px; text-align: center;}
+.app .landing .landing-features-heading h2 {margin: 0 0 16px; font-size: clamp(29px, 3vw, 40px); line-height: 1.15; letter-spacing: -1.3px; font-weight: 800;}
+.app .landing .landing-features-heading p {margin: 0; font-size: 17px; line-height: 1.75; color: #55695d;}
+.app .landing .landing-features-grid {display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 18px;}
+.app .landing .landing-feature {padding: 28px 24px; background: #fff; border: 1px solid #dfebe2; border-radius: 20px; box-shadow: 0 5px 20px #123b2305;}
+.app .landing .landing-feature-icon {display: grid; place-items: center; width: 52px; height: 52px; border-radius: 16px; background: #eaf6ee; color: #008753; margin-bottom: 22px;}
+.app .landing .landing-feature h3 {margin: 0 0 12px; font-size: 19px; line-height: 1.35; font-weight: 750; letter-spacing: -.4px;}
+.app .landing .landing-feature p {margin: 0; font-size: 15px; line-height: 1.8; color: #55695d;}
+.app.dark .landing .landing-features {background: #13291f; border-color: #294437; color: #f3f8f5;}
+.app.dark .landing .landing-features::before {opacity: .12;}
+.app.dark .landing .landing-features-heading p,
+.app.dark .landing .landing-feature p {color: #bfcec5;}
+.app.dark .landing .landing-feature {background: #193226; border-color: #2c4a39; box-shadow: none;}
+.app.dark .landing .landing-feature-icon {background: #244c36; color: #6ce6a9;}
+@media (max-width: 1000px) {
+  .app .landing .landing-features-grid {grid-template-columns: repeat(2, minmax(0, 1fr));}
+}
+@media (max-width: 540px) {
+  .app .landing .landing-features {padding: 44px 20px 48px;}
+  .app .landing .landing-features-heading {margin-bottom: 26px; text-align: left;}
+  .app .landing .landing-features-heading h2 {font-size: 30px; letter-spacing: -1px;}
+  .app .landing .landing-features-heading p {font-size: 16px;}
+  .app .landing .landing-features-grid {grid-template-columns: minmax(0, 1fr); gap: 14px;}
+  .app .landing .landing-feature {padding: 24px;}
+  .app .landing .landing-feature-icon {margin-bottom: 18px;}
+}
