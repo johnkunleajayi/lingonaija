@@ -99,7 +99,12 @@ export function Lesson({content, onClose, onComplete, language='yoruba', unitNum
 
       {step === 0 && <p>{content.introduction}</p>}
 
-      <div className="lesson-counter">Exercise {step + 1} of {content.exercises.length}</div>
+      <div className="lesson-exercise-progress">
+        <div className="lesson-counter">Exercise {step + 1} of {content.exercises.length}</div>
+        <div className="exercise-segments" role="progressbar" aria-label="Exercise progress" aria-valuemin={0} aria-valuemax={content.exercises.length} aria-valuenow={step} aria-valuetext={`${step} of ${content.exercises.length} exercises finished; exercise ${step + 1} is current`}>
+          {content.exercises.map((item,index)=><span key={item.id} aria-hidden="true" className={index<step?'finished':index===step?'current':'pending'}/>)}
+        </div>
+      </div>
 
       <h3 ref={heading} tabIndex={-1}>{exercise.prompt}</h3>
 

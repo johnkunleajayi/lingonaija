@@ -1,3 +1,4 @@
+import './conversation.css';
 import {Character} from './Character';
 import {courses,type Language} from './courses';
 import {useRef, useState} from 'react';
@@ -28,11 +29,17 @@ export function Conversation({language='yoruba'}:{language?:Language}){
   <div className="conversation-heading"><div><span className="eyebrow">REAL-LIFE CONNECTIONS</span><h2>Conversation practice with {character}</h2><p>{title} · 3 short greeting turns</p></div><Character language={language}/></div>
   {!opened?<button className="primary" disabled={busy} onClick={()=>{void call(true)}}>{busy?'Opening…':`Practise with ${character}`}</button>:<>
    {finished?<><h3>Conversation complete!</h3><p>You welcomed {character} and exchanged everyday greetings.</p></>:<>
-    <p className="conversation-turn"><strong>Turn {(turn?.index??0)+1} of 3 · {character}</strong></p><p className="conversation-prompt">{turn?.ade}</p>
+    <div className="conversation-turn-progress">
+     <p className="conversation-turn"><strong>Turn {(turn?.index??0)+1} of 3</strong></p>
+     <div className="conversation-turn-segments" role="progressbar" aria-label="Conversation turn progress" aria-valuemin={0} aria-valuemax={3} aria-valuenow={turn?.index??0} aria-valuetext={`${turn?.index??0} of 3 turns finished; turn ${(turn?.index??0)+1} is current`}>
+      {[0,1,2].map(index=><span key={index} aria-hidden="true" className={index<(turn?.index??0)?'finished':index===(turn?.index??0)?'current':'pending'}/>)}
+     </div>
+    </div>
+    <div className="conversation-message"><div className="conversation-speaker"><Character language={language}/><strong>{character}</strong></div><p className="conversation-prompt">{turn?.ade}</p></div>
     <form onSubmit={e=>{e.preventDefault();if(answer.trim()&&!feedback)void call(false)}}>
      <label htmlFor="conversation-response">Your {courses[language].name} response</label>
-     <input ref={input} autoFocus id="conversation-response" maxLength={500} value={answer} disabled={busy||!!feedback} onChange={e=>setAnswer(e.target.value)} className="conversation-input"/>
-     <p>Tone marks are welcome, but you can type without them. We’ll focus on your meaning.</p>
+     <input ref={input} autoFocus id="conversation-response" maxLength={500} aria-describedby="conversation-guidance" value={answer} disabled={busy||!!feedback} onChange={e=>setAnswer(e.target.value)} className="conversation-input"/>
+     <p id="conversation-guidance" className="conversation-guidance">Tone marks are welcome, but you can type without them. We’ll focus on your meaning.</p>
      {!feedback&&<button className="primary" disabled={busy||!answer.trim()}>{busy?'Checking…':'Send response'}</button>}
     </form>
    </>}
@@ -47,7 +54,7 @@ export function Conversation({language='yoruba'}:{language?:Language}){
      setTimeout(()=>input.current?.focus(),0);
     }}>{feedback.complete?'Finish conversation':feedback.meaning_correct?'Next turn':'Try again'}</button>
    </div>}
-   <button className="account-button" disabled={busy} onClick={()=>{setOpened(false);setTurn(null);setFeedback(null);setError('');setWrongAttempts(0);setFinished(false)}}>Close practice</button>
+   <button className="account-button conversation-close" disabled={busy} onClick={()=>{setOpened(false);setTurn(null);setFeedback(null);setError('');setWrongAttempts(0);setFinished(false)}}>Close practice</button>
   </>}
   {error&&<p role="alert">{error}</p>}
  </section>;

@@ -121,3 +121,24 @@ it.each(Object.entries(learningCourses).flatMap(([language,course])=>course.unit
  await waitFor(()=>expect(save).toHaveBeenCalledWith(content.exercises.map(exercise=>exercise.options.indexOf(exercise.answer))));
  expect(screen.getByText('4 of 4 correct on your first choice. Keep practising!')).toBeTruthy();
 });
+
+it.each(Object.entries(learningCourses).flatMap(([language,course])=>course.units.flatMap(unit=>unit.lessons.map(content=>({language,content})))))(
+ 'preserves all four prompts and shows shared progress for $language / $content.title',({language,content})=>{
+  const {container}=render(<Lesson language={language as 'yoruba'|'igbo'|'hausa'} content={content} onClose={()=>{}}/>);
+  content.exercises.forEach((exercise,index)=>{
+   const progress=screen.getByRole('progressbar',{name:'Exercise progress'});
+   expect(progress.getAttribute('aria-valuenow')).toBe(String(index));
+   expect(progress.getAttribute('aria-valuemax')).toBe('4');
+   expect(progress.querySelectorAll('span')).toHaveLength(4);
+   expect(progress.querySelectorAll('.finished')).toHaveLength(index);
+   expect(progress.querySelectorAll('.current')).toHaveLength(1);
+   expect(screen.getByRole('heading',{name:exercise.prompt}).textContent).toBe(exercise.prompt);
+   expect(container.querySelector('.character')).toBeNull();
+   fireEvent.click(screen.getByRole('button',{name:exercise.answer}));
+   expect(progress.getAttribute('aria-valuenow')).toBe(String(index));
+   expect(screen.getByRole('status').textContent).toContain(exercise.explanation);
+   fireEvent.click(screen.getByRole('button',{name:index===3?'Finish lesson':'Next exercise'}));
+  });
+  expect(screen.queryByRole('progressbar',{name:'Exercise progress'})).toBeNull();
+  expect(screen.getByText('4 of 4 correct on your first choice. Keep practising!')).toBeTruthy();
+ });

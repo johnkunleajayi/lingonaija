@@ -63,3 +63,27 @@ it.each([['igbo','Ada',['Nnoo','Kedu?','O di mma']],['hausa','Amina',['Sannu da 
  expect(screen.getByText('Conversation complete!')).toBeTruthy();
  expect(fetch).toHaveBeenCalledWith(`/api/conversation/${language}/evaluate`,expect.objectContaining({body:JSON.stringify({turn:0,response:answers[0]})}));
 });
+
+it.each([['yoruba','Yorùbá','Adé'],['igbo','Igbo','Ada'],['hausa','Hausa','Amina']] as const)('shows shared guided turn progress and companion bubbles for %s',async(language,label,character)=>{
+ const first={index:0,ade:'A visitor has arrived.',preferred_form:'Welcome'};
+ const next={...first,index:1,ade:'We meet the next morning.'};
+ vi.stubGlobal('fetch',vi.fn().mockResolvedValueOnce({ok:true,json:async()=>({turn:first})}).mockResolvedValueOnce({ok:true,json:async()=>({meaning_correct:true,preferred_form:'Welcome',orthography_note:'Notice the spelling.',feedback:'That fits.',character_reply:'Thank you for welcoming me.',next_turn:next,complete:false})}));
+ const {container}=render(<Conversation language={language}/>);fireEvent.click(screen.getByRole('button',{name:`Practise with ${character}`}));
+ const input=await screen.findByLabelText(`Your ${label} response`);
+ expect(screen.getByText('Turn 1 of 3')).toBeTruthy();
+ const progress=screen.getByRole('progressbar',{name:'Conversation turn progress'});
+ expect(progress.getAttribute('aria-valuenow')).toBe('0');expect(progress.querySelectorAll('span')).toHaveLength(3);
+ expect(container.querySelector('.conversation-speaker')?.textContent).toBe(character);
+ expect(container.querySelector('.conversation-speaker .character')).toBeTruthy();
+ expect(container.querySelector('.conversation-prompt')?.textContent).toBe(first.ade);
+ expect(input.getAttribute('aria-describedby')).toBe('conversation-guidance');
+ expect(screen.getByRole('button',{name:'Send response'}).classList.contains('primary')).toBe(true);
+ expect(screen.getByRole('button',{name:'Close practice'}).classList.contains('primary')).toBe(false);
+ fireEvent.change(input,{target:{value:'Welcome'}});fireEvent.submit(input.closest('form')!);
+ await screen.findByRole('status');expect(screen.getByLabelText(`${character}’s reply`).textContent).toContain('Thank you for welcoming me.');
+ expect(progress.getAttribute('aria-valuenow')).toBe('0');expect(screen.queryByText(next.ade)).toBeNull();
+ fireEvent.click(screen.getByRole('button',{name:'Next turn'}));
+ expect(screen.getByText('Turn 2 of 3')).toBeTruthy();expect(progress.getAttribute('aria-valuenow')).toBe('1');
+ expect(progress.querySelectorAll('.finished')).toHaveLength(1);
+ fireEvent.click(screen.getByRole('button',{name:'Close practice'}));expect(screen.queryByRole('progressbar')).toBeNull();expect(screen.getByRole('button',{name:`Practise with ${character}`})).toBeTruthy();
+});
