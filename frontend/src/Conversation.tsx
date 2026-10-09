@@ -1,3 +1,4 @@
+import {apiUrl} from './api';
 import './conversation.css';
 import {Character} from './Character';
 import {courses,type Language} from './courses';
@@ -19,7 +20,7 @@ export function Conversation({language='yoruba'}:{language?:Language}){
  async function call(start:boolean){
   if(lock.current)return;lock.current=true;setBusy(true);setError('');
   try{
-   const result=await fetch(start?`/api/conversation/${language}`:`/api/conversation/${language}/evaluate`,start?{credentials:'include'}:{method:'POST',credentials:'include',headers:{'Content-Type':'application/json'},body:JSON.stringify({turn:turn!.index,response:answer})});
+   const result=await fetch(apiUrl(start?`/api/conversation/${language}`:`/api/conversation/${language}/evaluate`),start?{credentials:'include'}:{method:'POST',credentials:'include',headers:{'Content-Type':'application/json'},body:JSON.stringify({turn:turn!.index,response:answer})});
    if(!result.ok){const data=await result.json();throw new Error(typeof data.detail==='string'?data.detail:'Practice is unavailable. Please try again.')}
    const data=await result.json();if(start){if(data.scenario_title)setTitle(data.scenario_title);setTurn(data.turn);setFeedback(null);setAnswer('');setOpened(true);setWrongAttempts(0);setFinished(false)}else {setFeedback(data);if(!data.meaning_correct)setWrongAttempts(value=>value+1);}
   }catch(e){setError(e instanceof Error?e.message:'Practice is unavailable. Please try again.')}

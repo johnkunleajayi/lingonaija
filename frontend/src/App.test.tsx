@@ -252,3 +252,15 @@ it('shows an existing avatar and falls back to initials when loading fails',asyn
 it('uses initials when no avatar is available',async()=>{
  vi.stubGlobal('fetch',vi.fn().mockResolvedValueOnce({ok:true,json:async()=>({id:'u',display_name:'Ada',preferred_language:'igbo'})}).mockResolvedValue({ok:true}));render(<App/>);expect((await screen.findByRole('img',{name:"Ada's initials"})).textContent).toBe('A');
 });
+it('uses the configured API origin for authenticated requests while keeping session cookies',async()=>{
+ vi.stubEnv('VITE_API_BASE_URL','https://backend.example.test/');
+ try {
+  const requests=vi.fn().mockResolvedValueOnce({ok:true,json:async()=>({id:'u',display_name:'Ada',preferred_language:'igbo'})}).mockResolvedValue({ok:true});vi.stubGlobal('fetch',requests);
+  render(<App/>);await screen.findByRole('button',{name:'My learning'});
+  expect(requests).toHaveBeenCalledWith('https://backend.example.test/api/auth/me',{credentials:'include'});
+  fireEvent.click(screen.getByRole('button',{name:'My learning'}));await screen.findByRole('heading',{name:'Your Igbo journey'});
+  expect(requests).toHaveBeenCalledWith('https://backend.example.test/api/enrollments',expect.objectContaining({credentials:'include',method:'POST'}));
+  fireEvent.click(screen.getByRole('button',{name:'Sign out'}));await screen.findByRole('button',{name:'Discover'});
+  expect(requests).toHaveBeenCalledWith('https://backend.example.test/api/auth/logout',expect.objectContaining({credentials:'include',method:'POST'}));
+ } finally {vi.unstubAllEnvs();}
+});
