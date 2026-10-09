@@ -1,4 +1,4 @@
-import {learningCourses} from './lessonContent';
+import {learningCourses,courseUnits,courseLessons} from './lessonContent';
 export type Language = 'yoruba'|'igbo'|'hausa';
 const culturalCourses = {
  yoruba:{name:'Yorùbá',greeting:'Ẹ káàbọ̀',meaning:'You are welcome',person:'Adé',color:'#cb774f',clothing:'Contemporary agbádá-inspired outfit and patterned fìlà'},
@@ -6,4 +6,4 @@ const culturalCourses = {
  hausa:{name:'Hausa',greeting:'Sannu',meaning:'Hello',person:'Amina',color:'#458d98',clothing:'Contemporary long dress and matching headscarf with geometric embroidery'}
 };
 
-export const courses = Object.fromEntries(Object.entries(culturalCourses).map(([language,course])=>[language,{...course,units:learningCourses[language as Language].units.map(unit=>unit.title),lessons:learningCourses[language as Language].units.flatMap(unit=>unit.lessons.map(lesson=>lesson.title))}])) as Record<Language,typeof culturalCourses.yoruba & {units:string[];lessons:string[]}>;
+export const courses = Object.fromEntries(Object.entries(culturalCourses).map(([language,course])=>[language,{...course,units:courseUnits(learningCourses[language as Language]).map(unit=>unit.title),lessons:courseLessons(language as Language).map(lesson=>lesson.title)}])) as Record<Language,typeof culturalCourses.yoruba & {units:string[];lessons:string[]}>;

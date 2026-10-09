@@ -1,3 +1,4 @@
+import type {ExerciseAnswer} from './lessonContent';
 import {apiUrl} from './api';
 import {useEffect,useRef,useState} from 'react';
 import type {Language} from './courses';
@@ -20,7 +21,7 @@ export function useAuth(){
   }finally{busy.current=false;setEnrolling(false)}
  }
  async function logout(){const response=await fetch(apiUrl('/api/auth/logout'),{method:'POST',credentials:'include'});if(!response.ok)throw new Error('Logout failed');setUser(null)}
- async function completeLesson(language:Language,lessonId:string,answers:number[]){
+ async function completeLesson(language:Language,lessonId:string,answers:ExerciseAnswer[]){
   const response=await fetch(apiUrl(`/api/learning/${language}/${lessonId}/complete`),{method:'POST',credentials:'include',headers:{'Content-Type':'application/json'},body:JSON.stringify({answers})});
   if(!response.ok)throw new Error('Completion could not be saved');
   const progress:Progress=await response.json();

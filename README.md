@@ -220,3 +220,13 @@ Set-Location 'C:\Users\JOHN-KUNLE\OneDrive\Desktop\lingonaija\backend'
 ```
 
 Keep the existing private `backend/.env` and database URL unchanged. To check the journey, sign in, choose a language, complete Getting Started in order, then complete Family & People and Food & Drink in Everyday Life. Each first completion adds 10 XP; replays add none. Switch language to confirm its separate path and the shared total XP. Each finished course contributes 50 XP.
+
+### Curriculum sections
+
+The authored hierarchy is Course → Section → Unit → Lesson → Exercise. `backend/app/curriculum.json` is the shared ordering manifest used by the Python unlock traversal and imported at frontend build time. Keep the repository's backend directory available when building the frontend. Course IDs are language-specific; section IDs are scoped to a course, unit IDs to their section, and lesson IDs remain stable within a language.
+
+All current content belongs to Section 1, **Foundations**, with the existing Getting Started and Everyday Life units. Section and unit `order` values determine traversal; `lesson_ids` determines lesson order within a unit. The dashboard derives boundaries and next steps from this hierarchy rather than fixed indexes. Conversation Practice stays after the first existing lesson.
+
+To publish Section 2 later, add a unique section ID/title/order and its ordered units/lesson IDs to this manifest, author the corresponding lesson content and server answer keys, and validate them together. Do not rename existing lesson IDs. There is no section/unit/lesson count limit and no separate Section learner-progress table: completion continues to be keyed by user, language and lesson ID.
+
+Migration `0011_section_curriculum` removes the fixed five-lesson database allowlist while retaining the language constraint. The API still rejects lessons without published answer keys. It does not delete or rewrite learner records. Apply migrations through the normal Alembic process when ready; this change does not apply them automatically.

@@ -1,0 +1,122 @@
+{
+  "yoruba": {
+    "id": "yoruba-course",
+    "sections": [
+      {
+        "id": "foundations",
+        "title": "Foundations",
+        "order": 1,
+        "units": [
+          {
+            "id": "unit-1",
+            "title": "Getting Started",
+            "order": 1,
+            "lesson_ids": [
+              "a-warm-welcome",
+              "everyday-greetings",
+              "introduce-yourself"
+            ]
+          },
+          {
+            "id": "unit-2",
+            "title": "Everyday Life",
+            "order": 2,
+            "lesson_ids": [
+              "family-and-people",
+              "food-and-drink",
+              "numbers-and-money"
+            ]
+          },
+          {
+            "id": "unit-3",
+            "title": "Getting Around",
+            "order": 3,
+            "lesson_ids": [
+              "places-around-me",
+              "asking-for-directions",
+              "transport-and-travel"
+            ]
+          },
+          {
+            "id": "unit-4",
+            "title": "Daily Connections",
+            "order": 4,
+            "lesson_ids": [
+              "time-and-daily-routine",
+              "shopping-and-the-market",
+              "making-requests"
+            ]
+          },
+          {
+            "id": "unit-5",
+            "title": "Section Review",
+            "order": 5,
+            "lesson_ids": ["visual-review", "build-the-sentence"]
+          }
+        ]
+      }
+    ]
+  },
+  "igbo": {
+    "id": "igbo-course",
+    "sections": [
+      {
+        "id": "foundations",
+        "title": "Foundations",
+        "order": 1,
+        "units": [
+          {
+            "id": "unit-1",
+            "title": "Getting Started",
+            "order": 1,
+            "lesson_ids": [
+              "a-warm-welcome",
+              "everyday-greetings",
+              "introduce-yourself"
+            ]
+          },
+          {
+            "id": "unit-2",
+            "title": "Everyday Life",
+            "order": 2,
+            "lesson_ids": [
+              "family-and-people",
+              "food-and-drink"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "hausa": {
+    "id": "hausa-course",
+    "sections": [
+      {
+        "id": "foundations",
+        "title": "Foundations",
+        "order": 1,
+        "units": [
+          {
+            "id": "unit-1",
+            "title": "Getting Started",
+            "order": 1,
+            "lesson_ids": [
+              "a-warm-welcome",
+              "everyday-greetings",
+              "introduce-yourself"
+            ]
+          },
+          {
+            "id": "unit-2",
+            "title": "Everyday Life",
+            "order": 2,
+            "lesson_ids": [
+              "family-and-people",
+              "food-and-drink"
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

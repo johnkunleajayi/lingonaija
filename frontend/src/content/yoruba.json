@@ -11,6 +11,7 @@
     "exercises": [
       {
         "id": "class-introduction",
+        "media": {"type": "image", "src": "/images/lessons/yoruba/introduce-yourself.png", "alt": "Visual context for introducing yourself and meeting someone in Yorùbá."},
         "prompt": "You join a community class. Your name is Adé. Choose an introduction so the group knows your name.",
         "options": [
           "Orúkọ mi ni Adé",
@@ -66,6 +67,7 @@
     "exercises": [
       {
         "id": "introduce-mother",
+        "media": {"type": "image", "src": "/images/lessons/yoruba/family-and-people.png", "alt": "A mother introducing her family to a visitor at a family gathering."},
         "prompt": "At a family gathering, you are Túndé’s mother and introduce yourself to a visitor. Which statement fits?",
         "options": [
           "Èmi ni bàbáa Kóyè",
@@ -121,6 +123,7 @@
     "exercises": [
       {
         "id": "want-water",
+        "media": {"type": "image", "src": "/images/lessons/yoruba/food-and-drink.png", "alt": "A host offering water during a shared family meal."},
         "prompt": "After a warm walk, your host asks what you would like. Choose the statement that says you want to drink water.",
         "options": [
           "Mo fẹ́ jẹ ìrẹsì",
@@ -164,5 +167,827 @@
         "explanation": "Mo lè mu omi means I can drink water. Lè expresses can in this sentence."
       }
     ]
-  }
+  },
+{
+  "id": "numbers-and-money",
+  "title": "Numbers & Money",
+  "introduction": "Ask a price and understand small amounts in a practice market exchange.",
+  "summary": "You practised asking a price, understanding an amount and counting purchases.",
+  "sourceIds": [
+    "yoruba-ch6",
+    "yoruba-ch4"
+  ],
+  "exercises": [
+    {
+      "id": "pepper-price",
+      "media": {"type": "image", "src": "/images/lessons/yoruba/numbers-and-money.png", "alt": "A learner asking a market seller about the price of peppers."},
+      "prompt": "At a market stall, you want to know the price of the peppers in front of you. Which question fits?",
+      "options": [
+        "Eélòó ni ata yìí?",
+        "Ẹ káàbọ̀",
+        "Mo fẹ́ mu omi"
+      ],
+      "answer": "Eélòó ni ata yìí?",
+      "explanation": "Eélòó ni ata yìí? asks how much this pepper costs."
+    },
+    {
+      "id": "quoted-price",
+      "prompt": "In a practice price exchange, the seller says “Ogúnun náírà ni.” How much are they asking?",
+      "options": [
+        "Five naira",
+        "Twenty naira",
+        "Two naira"
+      ],
+      "answer": "Twenty naira",
+      "explanation": "Ogúnun náírà ni means it is twenty naira. This is a teaching amount, not a claim about current market prices."
+    },
+    {
+      "id": "payment-amount",
+      "prompt": "You are checking a small practice payment. The seller says “Náírà márùnún”. Which amount should you confirm?",
+      "options": [
+        "Twenty naira",
+        "Three naira",
+        "Five naira"
+      ],
+      "answer": "Five naira",
+      "explanation": "Márùnún counts five here: náírà márùnún is five naira."
+    },
+    {
+      "id": "yam-quantity",
+      "prompt": "You are buying yams for a family meal. A shopper orders “iṣu mẹ́ta”. How many yams should be packed?",
+      "options": [
+        "Three",
+        "Two",
+        "Five"
+      ],
+      "answer": "Three",
+      "explanation": "Iṣu means yam and mẹ́ta counts three objects. The number follows the noun."
+    }
+  ]
+},
+{
+  "id": "places-around-me",
+  "title": "Places Around Me",
+  "introduction": "Recognise useful destinations when planning everyday errands.",
+  "summary": "You practised identifying a market, school, hospital and toilet in everyday situations.",
+  "sourceIds": [
+    "yoruba-ch6",
+    "yoruba-ch8",
+    "yoruba-ch10"
+  ],
+  "exercises": [
+    {
+      "id": "market-errand",
+      "media": {"type": "image", "src": "/images/lessons/yoruba/places-around-me.png", "alt": "A learner in a local market area identifying where to buy fresh food."},
+      "prompt": "You need to buy fresh food for dinner. Which destination would you ask a local friend about?",
+      "options": [
+        "ilé ìwòsàn",
+        "ọjà",
+        "ilé ìgbọnsẹ̀"
+      ],
+      "answer": "ọjà",
+      "explanation": "Ọjà means market, a place for buying and selling."
+    },
+    {
+      "id": "school-meeting",
+      "prompt": "You are meeting a teacher where children attend classes. Which destination fits?",
+      "options": [
+        "ilé-ìwé",
+        "ọjà",
+        "ilé ìgbọnsẹ̀"
+      ],
+      "answer": "ilé-ìwé",
+      "explanation": "Ilé-ìwé means school. It identifies your destination, rather than a market."
+    },
+    {
+      "id": "hospital-visit",
+      "prompt": "You are accompanying a friend for hospital care. Which place name should you recognise?",
+      "options": [
+        "ọjà",
+        "ilé-ìwé",
+        "ilé ìwòsàn"
+      ],
+      "answer": "ilé ìwòsàn",
+      "explanation": "Ilé ìwòsàn means hospital. This exercise identifies a place, not medical advice."
+    },
+    {
+      "id": "toilet-facility",
+      "prompt": "During a visit, you need the toilet. Which facility name should you look for or ask about?",
+      "options": [
+        "ilé ìgbọnsẹ̀",
+        "ọjà",
+        "ilé-ìwé"
+      ],
+      "answer": "ilé ìgbọnsẹ̀",
+      "explanation": "Ilé ìgbọnsẹ̀ means toilet."
+    }
+  ]
+},
+{
+  "id": "asking-for-directions",
+  "title": "Asking for Directions",
+  "introduction": "Use familiar landmarks and understand a simple direction or distance clue.",
+  "summary": "You practised asking about a street, recognising left and understanding distance clues.",
+  "sourceIds": [
+    "yoruba-ch11",
+    "yoruba-ch6",
+    "yoruba-ch9"
+  ],
+  "exercises": [
+    {
+      "id": "which-street",
+      "media": {"type": "image", "src": "/images/lessons/yoruba/asking-for-directions.png", "alt": "A learner asking for directions at a street junction near a church."},
+      "prompt": "You are walking to a church and reach two streets. Which question asks which street leads there?",
+      "options": [
+        "Eélòó ni ata yìí?",
+        "Títì wo ló lọ sí ṣọ́ọ̀ṣì?",
+        "Ẹ káàárọ̀"
+      ],
+      "answer": "Títì wo ló lọ sí ṣọ́ọ̀ṣì?",
+      "explanation": "Títì wo ló lọ sí ṣọ́ọ̀ṣì? asks which street leads to the church."
+    },
+    {
+      "id": "left-street",
+      "prompt": "A local points out the street on “ọwọ́ òsì”. Which side should you follow?",
+      "options": [
+        "The right",
+        "Straight ahead",
+        "The left"
+      ],
+      "answer": "The left",
+      "explanation": "Ọwọ́ òsì identifies the left side in this direction."
+    },
+    {
+      "id": "nearby-market",
+      "prompt": "You ask about the market and hear “Ó súnmọ́”. What does this tell you before you set off?",
+      "options": [
+        "It is near",
+        "It is closed",
+        "It is expensive"
+      ],
+      "answer": "It is near",
+      "explanation": "Ó súnmọ́ means it is near. It does not tell you opening hours."
+    },
+    {
+      "id": "distance-clue",
+      "prompt": "While discussing two landmarks, your friend uses “jìnnà sí”. Which distance relationship are they describing?",
+      "options": [
+        "Inside",
+        "Far from",
+        "Beside"
+      ],
+      "answer": "Far from",
+      "explanation": "Jìnnà sí means far from. Check the distance before deciding how to travel."
+    }
+  ]
+},
+{
+  "id": "transport-and-travel",
+  "title": "Transport & Travel",
+  "introduction": "Discuss getting to a destination and recognise a simple bicycle travel plan.",
+  "summary": "You practised asking about travel to the market, recognising a bicycle and checking a destination.",
+  "sourceIds": [
+    "yoruba-ch11",
+    "yoruba-ch6"
+  ],
+  "exercises": [
+    {
+      "id": "travel-plan",
+      "media": {"type": "image", "src": "/images/lessons/yoruba/transport-and-travel.png", "alt": "Two friends discussing how to travel to the market, with transport options visible."},
+      "prompt": "You and a friend are planning a market visit. Which question asks how they will get there?",
+      "options": [
+        "Ẹ káàbọ̀",
+        "Báwo ni o ṣe máa dé ọjà?",
+        "Eélòó ni ata yìí?"
+      ],
+      "answer": "Báwo ni o ṣe máa dé ọjà?",
+      "explanation": "Báwo ni o ṣe máa dé ọjà? asks how you will get to the market."
+    },
+    {
+      "id": "bicycle-choice",
+      "prompt": "Your friend chooses a “kẹ̀kẹ́” for the journey. Which transport are they choosing in this lesson?",
+      "options": [
+        "A bicycle",
+        "A train",
+        "A boat"
+      ],
+      "answer": "A bicycle",
+      "explanation": "Kẹ̀kẹ́ means bicycle here. This lesson uses the textbook bicycle sense, not the informal name for a motorised tricycle."
+    },
+    {
+      "id": "journey-topic",
+      "prompt": "A friend mentions an “ìrìn-àjò” while explaining plans to visit another town. What are they talking about?",
+      "options": [
+        "A meal",
+        "A price",
+        "A journey"
+      ],
+      "answer": "A journey",
+      "explanation": "Ìrìn-àjò means journey or travel."
+    },
+    {
+      "id": "destination-check",
+      "prompt": "Before leaving together, your friend repeats “ọjà” as the destination. Where are you heading?",
+      "options": [
+        "The school",
+        "The market",
+        "The hospital"
+      ],
+      "answer": "The market",
+      "explanation": "Ọjà means market. Checking the destination helps you plan the trip together."
+    }
+  ]
+},
+{
+  "id": "time-and-daily-routine",
+  "title": "Time & Daily Routine",
+  "introduction": "Plan your day, recognise a morning meal and talk about tomorrow and bedtime.",
+  "summary": "You practised future plans, breakfast, tomorrow and saying you want to sleep.",
+  "sourceIds": [
+    "yoruba-ch3",
+    "yoruba-ch7"
+  ],
+  "exercises": [
+    {
+      "id": "morning-plan",
+      "media": {"type": "image", "src": "/images/lessons/yoruba/time-and-daily-routine.png", "alt": "Adé preparing to leave home for a visit later in the day."},
+      "prompt": "At home in the morning, you are getting ready for a visit later today. Your friend asks whether you will go. Which reply states your plan to go?",
+      "options": [
+        "Mo fẹ́ sùn",
+        "Mo máa lọ",
+        "Ẹ káàbọ̀"
+      ],
+      "answer": "Mo máa lọ",
+      "explanation": "Mo máa lọ means I will go. Máa marks a future plan; lọ means go."
+    },
+    {
+      "id": "breakfast-time",
+      "prompt": "Before leaving for class, your host offers “oúnjẹ àárọ̀”. Which part of your daily routine are they inviting you to?",
+      "options": [
+        "Breakfast",
+        "An evening meal",
+        "Going to sleep"
+      ],
+      "answer": "Breakfast",
+      "explanation": "Oúnjẹ àárọ̀ is a morning meal: breakfast. Àárọ̀ refers to the morning."
+    },
+    {
+      "id": "tomorrow-errand",
+      "prompt": "You cannot visit the market today. Your friend suggests “ọ̀la” instead. When should you plan the errand?",
+      "options": [
+        "Yesterday",
+        "This evening",
+        "Tomorrow"
+      ],
+      "answer": "Tomorrow",
+      "explanation": "Ọ̀la means tomorrow. It helps you agree on the day of an upcoming plan."
+    },
+    {
+      "id": "bedtime-plan",
+      "prompt": "After a busy day, your family asks whether you want another activity. You want to sleep. Which statement explains your wish?",
+      "options": [
+        "Mo máa lọ",
+        "Mo fẹ́ sùn",
+        "Mo fẹ́ mu omi"
+      ],
+      "answer": "Mo fẹ́ sùn",
+      "explanation": "Mo fẹ́ sùn means I want to sleep. Fẹ́ expresses a want; sùn means sleep."
+    }
+  ]
+},
+{
+  "id": "shopping-and-the-market",
+  "title": "Shopping & the Market",
+  "introduction": "Ask what a food seller has, check a price and follow a simple buying exchange.",
+  "summary": "You practised asking about available food, checking a rice price, understanding a refusal and paying.",
+  "sourceIds": [
+    "yoruba-ch7"
+  ],
+  "exercises": [
+    {
+      "id": "available-food",
+      "media": {"type": "image", "src": "/images/lessons/yoruba/shopping-and-the-market.png", "alt": "Adé asking a food seller what meals are available at a Nigerian prepared-food stall with covered serving pots."},
+      "prompt": "At a market food stall, you greet the seller and look at the covered serving pots. Before choosing a meal, how do you ask what kinds of food they have?",
+      "options": [
+        "Irú oúnjẹ wo ni ẹ ní?",
+        "Ẹ káàárọ̀",
+        "Báwo ni o ṣe máa dé ọjà?"
+      ],
+      "answer": "Irú oúnjẹ wo ni ẹ ní?",
+      "explanation": "Irú oúnjẹ wo ni ẹ ní? asks what kinds of food you have. Ẹ addresses the seller respectfully."
+    },
+    {
+      "id": "rice-price",
+      "prompt": "You have chosen rice at the stall. Before agreeing to buy it, which question asks how much the seller charges for rice?",
+      "options": [
+        "Orúkọ mi ni Adé",
+        "Mo fẹ́ sùn",
+        "Eélòó ni ẹ ń ta ìrẹsì?"
+      ],
+      "answer": "Eélòó ni ẹ ń ta ìrẹsì?",
+      "explanation": "Eélòó ni ẹ ń ta ìrẹsì? asks how much you are selling rice for. The price-question pattern can be used with the item you want."
+    },
+    {
+      "id": "offer-declined",
+      "prompt": "You offer a lower amount for a meal. The seller answers “Rárá, kò gbà.” What should you understand before continuing?",
+      "options": [
+        "The seller accepted your offer",
+        "The seller did not accept your offer",
+        "The seller is welcoming you"
+      ],
+      "answer": "The seller did not accept your offer",
+      "explanation": "Rárá, kò gbà rejects the proposed amount: no, that is not acceptable. You have not yet agreed on the price."
+    },
+    {
+      "id": "handing-payment",
+      "prompt": "You and the seller have agreed on the price. You hold out the payment and say “Ẹ gba owó.” What are you asking the seller to do?",
+      "options": [
+        "Take the money",
+        "Tell you their name",
+        "Show you the church"
+      ],
+      "answer": "Take the money",
+      "explanation": "Ẹ gba owó means take the money, said respectfully when handing over payment."
+    }
+  ]
+},
+{
+  "id": "making-requests",
+  "title": "Making Requests",
+  "introduction": "Ask for something at a food stall, make your request polite and handle a missed explanation.",
+  "summary": "You practised requesting a dish, saying please, asking for repetition and thanking someone.",
+  "sourceIds": [
+    "yoruba-ch7",
+    "yoruba-phrases"
+  ],
+  "exercises": [
+    {
+      "id": "request-dish",
+      "media": {"type": "image", "src": "/images/lessons/yoruba/making-requests.png", "alt": "Adé politely requesting àbùlà from a food seller at an àmàlà and àbùlà food stall."},
+      "prompt": "At a food stall, you have chosen àbùlà, the combined stew served with your meal. Which request tells the seller to give you that choice?",
+      "options": [
+        "Ẹ káàbọ̀",
+        "Ẹ fún mi ní àbùlà",
+        "Mo fẹ́ sùn"
+      ],
+      "answer": "Ẹ fún mi ní àbùlà",
+      "explanation": "Ẹ fún mi ní àbùlà requests àbùlà. Ẹ fún mi ní ... is a respectful give me ... pattern."
+    },
+    {
+      "id": "polite-opener",
+      "prompt": "You need an older neighbour’s attention before making a small request. Which expression can you use to say please?",
+      "options": [
+        "Ó dàárọ̀",
+        "Ọ̀la",
+        "Ẹ jọ̀wọ́"
+      ],
+      "answer": "Ẹ jọ̀wọ́",
+      "explanation": "Ẹ jọ̀wọ́ means please and can politely introduce a request. Ẹ is respectful."
+    },
+    {
+      "id": "repeat-directions",
+      "prompt": "A local gives you directions, but you miss what they say. Which request asks them to say it again?",
+      "options": [
+        "Ẹ jọ̀wọ́, tún un sọ",
+        "Eélòó ni ata yìí?",
+        "Mo máa lọ"
+      ],
+      "answer": "Ẹ jọ̀wọ́, tún un sọ",
+      "explanation": "Ẹ jọ̀wọ́, tún un sọ means please say it again. Use it when you need to hear an explanation once more."
+    },
+    {
+      "id": "thank-helper",
+      "prompt": "Your neighbour has helped with your request. Which expression politely thanks them before you leave?",
+      "options": [
+        "Ẹ káàbọ̀",
+        "Ẹ ṣé",
+        "Kí ni orúkọ yín?"
+      ],
+      "answer": "Ẹ ṣé",
+      "explanation": "Ẹ ṣé is a respectful thank you. It acknowledges the help you received."
+    }
+  ]
+},
+{
+  "id": "visual-review",
+  "title": "Visual Review",
+  "introduction": "Connect familiar Yorùbá words with eight images from everyday life. Choose one answer for each image.",
+  "summary": "You reviewed family, food, places, a direction and travel through eight images.",
+  "sourceIds": [
+    "yoruba-ch5",
+    "yoruba-ch6",
+    "yoruba-ch7",
+    "yoruba-ch8",
+    "yoruba-ch11",
+    "yoruba-uw-directions",
+    "yoruba-uw-transport"
+  ],
+  "exercises": [
+    {
+      "id": "identify-mother",
+      "type": "image_choice",
+      "prompt": "Adé shows you a portrait of his female parent. Which Yorùbá family word identifies her?",
+      "media": {
+        "type": "image",
+        "src": "/images/lessons/yoruba/review/review-mother.png",
+        "alt": "A smiling woman wearing a patterned outfit and headwrap."
+      },
+      "options": [
+        "bàbá",
+        "màmá",
+        "àbúrò",
+        "ọ̀rẹ́"
+      ],
+      "answer": "màmá",
+      "explanation": "Màmá means mother."
+    },
+    {
+      "id": "identify-rice",
+      "type": "image_choice",
+      "prompt": "At a shared meal, which Yorùbá word names the food on this plate?",
+      "media": {
+        "type": "image",
+        "src": "/images/lessons/yoruba/review/review-rice.png",
+        "alt": "A white plate piled with small cooked white grains."
+      },
+      "options": [
+        "omi",
+        "àbùlà",
+        "ata",
+        "ìrẹsì"
+      ],
+      "answer": "ìrẹsì",
+      "explanation": "Ìrẹsì means rice."
+    },
+    {
+      "id": "identify-water",
+      "type": "image_choice",
+      "prompt": "Your host offers this drink with your meal. Which Yorùbá word names it?",
+      "media": {
+        "type": "image",
+        "src": "/images/lessons/yoruba/review/review-water.png",
+        "alt": "A clear glass filled with transparent liquid."
+      },
+      "options": [
+        "omi",
+        "ìrẹsì",
+        "ata",
+        "àbùlà"
+      ],
+      "answer": "omi",
+      "explanation": "Omi means water."
+    },
+    {
+      "id": "identify-market",
+      "type": "image_choice",
+      "prompt": "You are planning to buy fresh food. Which Yorùbá destination matches this scene?",
+      "media": {
+        "type": "image",
+        "src": "/images/lessons/yoruba/review/review-market.png",
+        "alt": "An outdoor aisle lined with vendors, produce baskets and colourful umbrellas."
+      },
+      "options": [
+        "ilé-ìwé",
+        "ilé ìwòsàn",
+        "ọjà",
+        "ilé ìgbọnsẹ̀"
+      ],
+      "answer": "ọjà",
+      "explanation": "Ọjà means market."
+    },
+    {
+      "id": "identify-hospital",
+      "type": "image_choice",
+      "prompt": "You accompany a friend to receive medical care. Which Yorùbá place name matches the image?",
+      "media": {
+        "type": "image",
+        "src": "/images/lessons/yoruba/review/review-hospital.png",
+        "alt": "A large building with a red cross and an emergency vehicle outside."
+      },
+      "options": [
+        "ọjà",
+        "ilé ìwòsàn",
+        "ilé-ìwé",
+        "ilé ìgbọnsẹ̀"
+      ],
+      "answer": "ilé ìwòsàn",
+      "explanation": "Ilé ìwòsàn means hospital."
+    },
+    {
+      "id": "identify-left",
+      "type": "image_choice",
+      "prompt": "A local points out which side to follow. Which Yorùbá expression matches the direction shown?",
+      "media": {
+        "type": "image",
+        "src": "/images/lessons/yoruba/review/review-left.png",
+        "alt": "A person pointing toward the image’s left edge beneath a matching arrow."
+      },
+      "options": [
+        "ọwọ́ ọ̀tún",
+        "tààrà",
+        "Ó súnmọ́",
+        "ọwọ́ òsì"
+      ],
+      "answer": "ọwọ́ òsì",
+      "explanation": "Ọwọ́ òsì identifies the left side."
+    },
+    {
+      "id": "identify-bicycle",
+      "type": "image_choice",
+      "prompt": "Your friend chooses this vehicle for a short journey. Which Yorùbá word names it in these lessons?",
+      "media": {
+        "type": "image",
+        "src": "/images/lessons/yoruba/review/review-bicycle.png",
+        "alt": "A blue two-wheeled vehicle with pedals, handlebars and a saddle."
+      },
+      "options": [
+        "kẹ̀kẹ́",
+        "bọ́ọ̀sì",
+        "dáńfó",
+        "ọ̀kadà"
+      ],
+      "answer": "kẹ̀kẹ́",
+      "explanation": "Kẹ̀kẹ́ names a bicycle in this course."
+    },
+    {
+      "id": "identify-abula",
+      "type": "image_choice",
+      "prompt": "At an àmàlà stall, identify the combined stew served beside the mound in this image. Which choice fits?",
+      "media": {
+        "type": "image",
+        "src": "/images/lessons/yoruba/review/review-abula.png",
+        "alt": "A plate with a brown mound surrounded by green, yellow and red sauces."
+      },
+      "options": [
+        "omi",
+        "ata",
+        "àbùlà",
+        "ìrẹsì"
+      ],
+      "answer": "àbùlà",
+      "explanation": "Àbùlà is the combined stew you practised requesting at a food stall."
+    }
+  ]
+},
+{
+  "id": "build-the-sentence",
+  "title": "Build the Sentence",
+  "introduction": "Tap the tiles to build each familiar Yorùbá sentence. Tap a selected tile to move it back, then check your answer.",
+  "summary": "You reviewed eight useful sentences for greetings, introductions, plans and requests.",
+  "sourceIds": [
+    "yoruba-ch3",
+    "yoruba-ch5",
+    "yoruba-ch6",
+    "yoruba-ch7",
+    "yoruba-ch11",
+    "yoruba-phrases"
+  ],
+  "exercises": [
+    {
+      "id": "build-morning",
+      "type": "sentence_order",
+      "prompt": "Good morning.",
+      "tiles": [
+        {
+          "id": "morning-2",
+          "text": "káàárọ̀"
+        },
+        {
+          "id": "morning-1",
+          "text": "Ẹ"
+        }
+      ],
+      "correctOrder": [
+        "morning-1",
+        "morning-2"
+      ],
+      "explanation": "Ẹ káàárọ̀"
+    },
+    {
+      "id": "build-name",
+      "type": "sentence_order",
+      "prompt": "My name is Adé.",
+      "tiles": [
+        {
+          "id": "name-4",
+          "text": "Adé"
+        },
+        {
+          "id": "name-3",
+          "text": "ni"
+        },
+        {
+          "id": "name-1",
+          "text": "Orúkọ"
+        },
+        {
+          "id": "name-2",
+          "text": "mi"
+        }
+      ],
+      "correctOrder": [
+        "name-1",
+        "name-2",
+        "name-3",
+        "name-4"
+      ],
+      "explanation": "Orúkọ mi ni Adé"
+    },
+    {
+      "id": "build-price",
+      "type": "sentence_order",
+      "prompt": "How much are these peppers?",
+      "tiles": [
+        {
+          "id": "price-3",
+          "text": "ata"
+        },
+        {
+          "id": "price-4",
+          "text": "yìí?"
+        },
+        {
+          "id": "price-2",
+          "text": "ni"
+        },
+        {
+          "id": "price-1",
+          "text": "Eélòó"
+        }
+      ],
+      "correctOrder": [
+        "price-1",
+        "price-2",
+        "price-3",
+        "price-4"
+      ],
+      "explanation": "Eélòó ni ata yìí?"
+    },
+    {
+      "id": "build-travel",
+      "type": "sentence_order",
+      "prompt": "How will you get to the market?",
+      "tiles": [
+        {
+          "id": "travel-7",
+          "text": "ọjà?"
+        },
+        {
+          "id": "travel-5",
+          "text": "máa"
+        },
+        {
+          "id": "travel-3",
+          "text": "o"
+        },
+        {
+          "id": "travel-1",
+          "text": "Báwo"
+        },
+        {
+          "id": "travel-6",
+          "text": "dé"
+        },
+        {
+          "id": "travel-4",
+          "text": "ṣe"
+        },
+        {
+          "id": "travel-2",
+          "text": "ni"
+        }
+      ],
+      "correctOrder": [
+        "travel-1",
+        "travel-2",
+        "travel-3",
+        "travel-4",
+        "travel-5",
+        "travel-6",
+        "travel-7"
+      ],
+      "explanation": "Báwo ni o ṣe máa dé ọjà?"
+    },
+    {
+      "id": "build-go",
+      "type": "sentence_order",
+      "prompt": "I will go.",
+      "tiles": [
+        {
+          "id": "go-3",
+          "text": "lọ"
+        },
+        {
+          "id": "go-1",
+          "text": "Mo"
+        },
+        {
+          "id": "go-2",
+          "text": "máa"
+        }
+      ],
+      "correctOrder": [
+        "go-1",
+        "go-2",
+        "go-3"
+      ],
+      "explanation": "Mo máa lọ"
+    },
+    {
+      "id": "build-sleep",
+      "type": "sentence_order",
+      "prompt": "I want to sleep.",
+      "tiles": [
+        {
+          "id": "sleep-2",
+          "text": "fẹ́"
+        },
+        {
+          "id": "sleep-3",
+          "text": "sùn"
+        },
+        {
+          "id": "sleep-1",
+          "text": "Mo"
+        }
+      ],
+      "correctOrder": [
+        "sleep-1",
+        "sleep-2",
+        "sleep-3"
+      ],
+      "explanation": "Mo fẹ́ sùn"
+    },
+    {
+      "id": "build-repeat",
+      "type": "sentence_order",
+      "prompt": "Please say it again.",
+      "tiles": [
+        {
+          "id": "repeat-4",
+          "text": "un"
+        },
+        {
+          "id": "repeat-5",
+          "text": "sọ"
+        },
+        {
+          "id": "repeat-2",
+          "text": "jọ̀wọ́,"
+        },
+        {
+          "id": "repeat-1",
+          "text": "Ẹ"
+        },
+        {
+          "id": "repeat-3",
+          "text": "tún"
+        }
+      ],
+      "correctOrder": [
+        "repeat-1",
+        "repeat-2",
+        "repeat-3",
+        "repeat-4",
+        "repeat-5"
+      ],
+      "explanation": "Ẹ jọ̀wọ́, tún un sọ"
+    },
+    {
+      "id": "build-request",
+      "type": "sentence_order",
+      "prompt": "Give me àbùlà.",
+      "tiles": [
+        {
+          "id": "request-5",
+          "text": "àbùlà"
+        },
+        {
+          "id": "request-3",
+          "text": "mi"
+        },
+        {
+          "id": "request-4",
+          "text": "ní"
+        },
+        {
+          "id": "request-1",
+          "text": "Ẹ"
+        },
+        {
+          "id": "request-2",
+          "text": "fún"
+        }
+      ],
+      "correctOrder": [
+        "request-1",
+        "request-2",
+        "request-3",
+        "request-4",
+        "request-5"
+      ],
+      "explanation": "Ẹ fún mi ní àbùlà"
+    }
+  ]
+}
 ]

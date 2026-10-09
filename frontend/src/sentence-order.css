@@ -1,0 +1,5 @@
+.app .sentence-order {text-align:left;margin:22px 0;}
+.app .sentence-answer,.app .sentence-bank {display:flex;flex-wrap:wrap;gap:8px;margin:14px 0;}
+.app .sentence-answer {min-height:72px;border:1px solid var(--border);border-radius:12px;padding:12px;background:var(--soft);align-items:center;}
+.app .sentence-answer>span {color:var(--muted);}
+.app .sentence-order .lesson-option {padding:10px 14px;min-height:48px;max-width:100%;overflow-wrap:anywhere;}

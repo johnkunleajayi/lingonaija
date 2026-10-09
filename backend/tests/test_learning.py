@@ -1,3 +1,4 @@
+from app.curriculum import lesson_ids
 import pytest
 from sqlalchemy import select, func
 from app.models import LessonCompletion
@@ -116,18 +117,18 @@ def test_five_lesson_sequence_and_immutable_first_completion(enrollment_db,langu
     headers={'Origin':get_settings().frontend_url}
     def complete(lesson,answers):
         return client.post(f'/api/learning/{language}/{lesson}/complete',json={'answers':list(answers)},headers=headers)
-    for index,lesson in enumerate(LESSON_IDS):
-        for later in LESSON_IDS[index+1:]:
+    for index,lesson in enumerate(lesson_ids(language)):
+        for later in lesson_ids(language)[index+1:]:
             assert complete(later,ANSWER_KEYS[(language,later)]).status_code==409
         key=ANSWER_KEYS[(language,lesson)]
-        imperfect=((key[0]+1)%3,*key[1:])
+        imperfect=(tuple(reversed(key[0])),*key[1:]) if isinstance(key[0],tuple) else ((key[0]+1)%3,*key[1:])
         result=complete(lesson,imperfect);assert result.status_code==200
         data=result.json();assert data['total_xp']==(index+1)*10
         row=next(row for row in data['completions'] if row['lesson_id']==lesson)
-        assert row['first_choice_score']==3 and row['xp']==10 and row['completed_at']
+        assert row['first_choice_score']==len(key)-1 and row['xp']==10 and row['completed_at']
         assert complete(lesson,key).json()==data
-    assert enrollment_db.scalar(select(func.count()).select_from(LessonCompletion))==5
-    assert client.get('/api/auth/me').json()['progress']['total_xp']==50
+    assert enrollment_db.scalar(select(func.count()).select_from(LessonCompletion))==len(lesson_ids(language))
+    assert client.get('/api/auth/me').json()['progress']['total_xp']==len(lesson_ids(language))*10
 
 
 def test_expanded_curriculum_keeps_languages_and_users_independent(enrollment_db):
@@ -138,12 +139,12 @@ def test_expanded_curriculum_keeps_languages_and_users_independent(enrollment_db
         post(client,language)
         # Previous-language completions never unlock this language's last lesson.
         assert client.post(f'/api/learning/{language}/food-and-drink/complete',json={'answers':list(ANSWER_KEYS[(language,'food-and-drink')])},headers=headers).status_code==409
-        for lesson in LESSON_IDS:
+        for lesson in lesson_ids(language):
             assert client.post(f'/api/learning/{language}/{lesson}/complete',json={'answers':list(ANSWER_KEYS[(language,lesson)])},headers=headers).status_code==200
     data=client.get('/api/auth/me').json()['progress']
-    assert data['total_xp']==150 and len(data['completions'])==15
+    assert data['total_xp']==240 and len(data['completions'])==24
     for language in ('yoruba','igbo','hausa'):
-        assert sum(row['xp'] for row in data['completions'] if row['language']==language)==50
+        assert sum(row['xp'] for row in data['completions'] if row['language']==language)==len(lesson_ids(language))*10
     other,_=client_for(enrollment_db,'newlearner@example.test');post(other,'igbo')
     assert other.get('/api/auth/me').json()['progress']['total_xp']==0
     assert other.post('/api/learning/igbo/everyday-greetings/complete',json={'answers':[1,0,2,1]},headers=headers).status_code==409
@@ -153,10 +154,86 @@ def test_expanded_curriculum_keeps_languages_and_users_independent(enrollment_db
 def test_new_published_content_matches_server_scoring_keys():
     import json
     from pathlib import Path
-    from app.learning import LESSON_IDS, ANSWER_KEYS
-    assert len(ANSWER_KEYS)==15
+    from app.learning import LESSON_IDS, ANSWER_KEYS, OPTION_COUNTS
+    assert len(ANSWER_KEYS)==24
     content_dir=Path(__file__).resolve().parents[2]/'frontend'/'src'/'content'
     for language in ('yoruba','igbo','hausa'):
         for lesson in json.loads((content_dir/(language+'.json')).read_text(encoding='utf-8')):
-            assert len(lesson['exercises'])==4 and lesson['sourceIds']
-            assert tuple(exercise['options'].index(exercise['answer']) for exercise in lesson['exercises'])==ANSWER_KEYS[(language,lesson['id'])]
+            assert len(lesson['exercises'])==len(ANSWER_KEYS[(language,lesson['id'])]) and lesson['sourceIds']
+            if lesson['exercises'][0].get('type')=='sentence_order':
+                assert tuple(tuple(e['correctOrder']) for e in lesson['exercises'])==ANSWER_KEYS[(language,lesson['id'])]
+                for exercise in lesson['exercises']:
+                    assert len(set(t['id'] for t in exercise['tiles']))==len(exercise['tiles'])
+                    assert set(exercise['correctOrder'])=={t['id'] for t in exercise['tiles']}
+                    assert [t['id'] for t in exercise['tiles']]!=exercise['correctOrder']
+            else:
+                assert tuple(exercise['options'].index(exercise['answer']) for exercise in lesson['exercises'])==ANSWER_KEYS[(language,lesson['id'])]
+                assert tuple(len(exercise['options']) for exercise in lesson['exercises'])==OPTION_COUNTS.get((language,lesson['id']), (3,)*len(lesson['exercises']))
+
+
+def test_daily_connections_unlocks_cross_unit_and_awards_xp_once(enrollment_db):
+    from app.learning import ANSWER_KEYS
+    client,_=client_for(enrollment_db,'unitfour@example.test');post(client,'yoruba')
+    headers={'Origin':get_settings().frontend_url}
+    def complete(lesson):
+        return client.post(f'/api/learning/yoruba/{lesson}/complete',json={'answers':list(ANSWER_KEYS[('yoruba',lesson)])},headers=headers)
+    ordered=lesson_ids('yoruba')
+    for lesson in ordered[:8]: assert complete(lesson).status_code==200
+    assert complete('time-and-daily-routine').status_code==409
+    assert complete('transport-and-travel').json()['total_xp']==90
+    for index,lesson in enumerate(ordered[9:12],10):
+        for later in ordered[index:]: assert complete(later).status_code==409
+        result=complete(lesson);assert result.status_code==200
+        data=result.json();assert data['total_xp']==index*10
+        assert complete(lesson).json()==data
+        row=next(row for row in data['completions'] if row['lesson_id']==lesson)
+        assert row['first_choice_score']==4 and row['xp']==10
+    assert len(data['completions'])==12
+
+def test_visual_review_unlock_score_replay_and_validation(enrollment_db):
+    from app.learning import ANSWER_KEYS
+    client,_=client_for(enrollment_db,'review@example.test');post(client,'yoruba')
+    headers={'Origin':get_settings().frontend_url}
+    def complete(lesson,answers):
+        return client.post(f'/api/learning/yoruba/{lesson}/complete',json={'answers':list(answers)},headers=headers)
+    review=ANSWER_KEYS[('yoruba','visual-review')]
+    assert review==(1,3,0,2,1,3,0,2)
+    assert complete('visual-review',review).status_code==409
+    for lesson in lesson_ids('yoruba')[:12]:assert complete(lesson,ANSWER_KEYS[('yoruba',lesson)]).status_code==200
+    for invalid in ([1,3,0,2],[1,3,0,2,1,3,0,4],review+(0,),[True]*8):
+        assert complete('visual-review',invalid).status_code==422
+    first=complete('visual-review',review);assert first.status_code==200
+    data=first.json();assert data['total_xp']==130
+    row=next(row for row in data['completions'] if row['lesson_id']=='visual-review')
+    assert row['first_choice_score']==8 and row['xp']==10 and row['completed_at']
+    assert complete('visual-review',[0]*8).json()==data
+    assert enrollment_db.scalar(select(func.count()).select_from(LessonCompletion))==13
+    assert not any(row['language']!='yoruba' for row in data['completions'])
+
+def test_sentence_order_unlock_save_immutable_score_and_xp(enrollment_db):
+    from app.learning import ANSWER_KEYS
+    client,_=client_for(enrollment_db,'sentences@example.test');post(client,'yoruba')
+    headers={'Origin':get_settings().frontend_url}
+    def complete(lesson,answers):return client.post(f'/api/learning/yoruba/{lesson}/complete',json={'answers':answers},headers=headers)
+    key=ANSWER_KEYS[('yoruba','build-the-sentence')]
+    assert complete('build-the-sentence',key).status_code==409
+    for lesson in lesson_ids('yoruba')[:-1]:assert complete(lesson,ANSWER_KEYS[('yoruba',lesson)]).status_code==200
+    for invalid in ([0]*8,[list(k) for k in key[:-1]],[[k[0]]*len(k) for k in key], [['invented']*len(k) for k in key]):
+        assert complete('build-the-sentence',invalid).status_code==422
+    first=[list(reversed(key[0])),*[list(k) for k in key[1:]]]
+    result=complete('build-the-sentence',first);assert result.status_code==200
+    data=result.json();assert data['total_xp']==140
+    row=next(r for r in data['completions'] if r['lesson_id']=='build-the-sentence')
+    assert row['first_choice_score']==7 and row['xp']==10 and row['completed_at']
+    assert complete('build-the-sentence',key).json()==data
+    assert len(data['completions'])==14
+
+
+def test_sentence_tiles_accept_identical_words_with_distinct_ids(enrollment_db,monkeypatch):
+    from app.learning import ANSWER_KEYS,SENTENCE_TILES
+    lesson='a-warm-welcome';lookup=('yoruba',lesson)
+    monkeypatch.setitem(ANSWER_KEYS,lookup,(('a','b'),))
+    monkeypatch.setitem(SENTENCE_TILES,lookup,({'a':'same','b':'same'},))
+    client,_=client_for(enrollment_db,'duplicate@example.test');post(client,'yoruba')
+    response=client.post(f'/api/learning/yoruba/{lesson}/complete',json={'answers':[['b','a']]},headers={'Origin':get_settings().frontend_url})
+    assert response.status_code==200 and response.json()['completions'][0]['first_choice_score']==1

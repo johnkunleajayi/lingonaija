@@ -1,3 +1,4 @@
+import {courseLessons} from './lessonContent';
 // @vitest-environment jsdom
 import React from 'react';
 import {act,render,screen,fireEvent,cleanup,waitFor} from '@testing-library/react';
@@ -63,7 +64,7 @@ it('restores real completion and XP on the Yoruba dashboard',async()=>{
  expect((screen.getByRole('button',{name:'Everyday Greetings, current'}) as HTMLButtonElement).disabled).toBe(false);
  fireEvent.click(screen.getByRole('button',{name:'Continue the journey'}));
  expect(screen.getByRole('dialog').textContent).toContain('Everyday Greetings');
- expect(screen.getByText('1 of 5 available lessons complete')).toBeTruthy();
+ expect(screen.getByText('1 of 14 available lessons complete')).toBeTruthy();
  expect(screen.queryByText('2 of 8 lessons complete · demo')).toBeNull();
 });
 
@@ -73,7 +74,7 @@ it('shows both completed lessons and 20 XP from real progress',async()=>{
  fireEvent.click(screen.getAllByRole('button',{name:'Start Learning Free'})[0]);
  await screen.findByRole('heading',{name:'Your Yorùbá journey'});
  expect(screen.getByText('20 course XP')).toBeTruthy();
- expect(screen.getByText('2 of 5 available lessons complete')).toBeTruthy();
+ expect(screen.getByText('2 of 14 available lessons complete')).toBeTruthy();
  expect(screen.getByRole('button',{name:'Everyday Greetings, completed'})).toBeTruthy();
 });
 
@@ -168,8 +169,8 @@ it('has no false demo activity or stale reward claims',async()=>{
  expect(screen.queryByRole('link',{name:'Go to conversation practice'})).toBeNull();
 });
 
-it.each([['yoruba','Yorùbá',5],['igbo','Igbo',5],['hausa','Hausa',5]])('honestly ends available %s content without silently replaying',async(language,name,size)=>{
- const completions=['a-warm-welcome','everyday-greetings','introduce-yourself','family-and-people','food-and-drink'].map(lesson_id=>({language,lesson_id,status:'completed',first_choice_score:4,completed_at:'2026-10-08',xp:10}));
+it.each([['yoruba','Yorùbá',14],['igbo','Igbo',5],['hausa','Hausa',5]])('honestly ends available %s content without silently replaying',async(language,name,size)=>{
+ const completions=['a-warm-welcome','everyday-greetings','introduce-yourself','family-and-people','food-and-drink',...(language==='yoruba'?['numbers-and-money','places-around-me','asking-for-directions','transport-and-travel','time-and-daily-routine','shopping-and-the-market','making-requests','visual-review','build-the-sentence']:[])].map(lesson_id=>({language,lesson_id,status:'completed',first_choice_score:4,completed_at:'2026-10-08',xp:10}));
  vi.stubGlobal('fetch',vi.fn().mockResolvedValueOnce({ok:true,json:async()=>({id:'123',display_name:'Ada',preferred_language:language,progress:{total_xp:size*10,completions}})}).mockResolvedValue({ok:true}));
  const scroll=vi.fn();Object.defineProperty(HTMLElement.prototype,'scrollIntoView',{configurable:true,value:scroll});
  render(<App/>);await screen.findByRole('button',{name:'Sign out'});fireEvent.click(screen.getAllByRole('button',{name:'Start Learning Free'})[0]);await screen.findByRole('heading',{name:`Your ${name} journey`});
@@ -206,7 +207,7 @@ it.each([['yoruba','Yorùbá'],['igbo','Igbo'],['hausa','Hausa']])('opens Unit 2
  vi.stubGlobal('fetch',vi.fn().mockResolvedValueOnce({ok:true,json:async()=>({id:'123',display_name:'Ada',preferred_language:language,progress:{total_xp:30,completions}})}).mockResolvedValue({ok:true}));
  render(<App/>);await screen.findByRole('button',{name:'Sign out'});fireEvent.click(screen.getAllByRole('button',{name:'Start Learning Free'})[0]);await screen.findByRole('heading',{name:`Your ${name} journey`});
  expect(screen.getByRole('heading',{name:'Getting Started'})).toBeTruthy();expect(screen.getByRole('heading',{name:'Everyday Life'})).toBeTruthy();
- expect(screen.getByText('3 of 5 available lessons complete')).toBeTruthy();
+ expect(screen.getByText(`3 of ${language==='yoruba'?14:5} available lessons complete`)).toBeTruthy();
  expect((screen.getByRole('button',{name:'Food & Drink, locked'}) as HTMLButtonElement).disabled).toBe(true);
  expect(screen.getByText('Complete Family & People to unlock')).toBeTruthy();
  fireEvent.click(screen.getByRole('button',{name:'Continue the journey'}));
@@ -268,16 +269,38 @@ it.each([['yoruba','Yorùbá'],['igbo','Igbo'],['hausa','Hausa']] as const)('aut
  const {courseLessons}=await import('./lessonContent');const lessons=courseLessons(language);
  const record=(lesson_id:string)=>({language,lesson_id,status:'completed',first_choice_score:4,completed_at:'2026-10-09',xp:10});
  for(const final of [false,true]){
-  const before=final?lessons.slice(0,4).map(item=>record(item.id)):[];const content=lessons[final?4:0];
+  const before=final?lessons.slice(0,-1).map(item=>record(item.id)):[];const content=lessons[final?lessons.length-1:0];
   vi.stubGlobal('fetch',vi.fn().mockResolvedValueOnce({ok:true,json:async()=>({id:'u',display_name:'Learner',preferred_language:language,progress:{total_xp:before.length*10,completions:before}})}).mockResolvedValueOnce({ok:true}).mockResolvedValueOnce({ok:true,json:async()=>({total_xp:(before.length+1)*10,completions:[...before,record(content.id)]})}));
   const view=render(<App/>);await screen.findByRole('button',{name:'My learning'});fireEvent.click(screen.getByRole('button',{name:'My learning'}));await screen.findByRole('heading',{name:`Your ${name} journey`});
   vi.useFakeTimers();fireEvent.click(screen.getByRole('button',{name:'Continue the journey'}));
-  for(let i=0;i<4;i++){fireEvent.click(screen.getByRole('button',{name:content.exercises[i].answer}));fireEvent.click(screen.getByRole('button',{name:i===3?'Finish lesson':'Next exercise'}));}
+  for(let i=0;i<content.exercises.length;i++){const exercise=content.exercises[i];if(exercise.type==='sentence_order'){for(const id of exercise.correctOrder)fireEvent.click(screen.getByRole('button',{name:`Add ${exercise.tiles.find(t=>t.id===id)!.text}`}));fireEvent.click(screen.getByRole('button',{name:'Check'}));}else fireEvent.click(screen.getByRole('button',{name:exercise.answer}));fireEvent.click(screen.getByRole('button',{name:i===content.exercises.length-1?'Finish lesson':'Next exercise'}));}
   await act(async()=>{await Promise.resolve();await Promise.resolve();});
   act(()=>vi.advanceTimersByTime(4000));expect(screen.getByRole('dialog')).toBeTruthy();act(()=>vi.advanceTimersByTime(7000));expect(screen.queryByRole('dialog')).toBeNull();
-  expect(screen.getByText(`${before.length+1} of 5 available lessons complete`)).toBeTruthy();
+  expect(screen.getByText(`${before.length+1} of ${lessons.length} available lessons complete`)).toBeTruthy();
   if(final){expect(screen.getByText('Available lessons complete!')).toBeTruthy();expect(screen.queryByRole('button',{name:'Continue the journey'})).toBeNull();}
   else expect(screen.getByRole('button',{name:'Everyday Greetings, current'})).toBeTruthy();
   view.unmount();vi.useRealTimers();
  }
+});
+it('continues Yoruba from Numbers & Money into Unit 3 without a special-case route',async()=>{
+ const ids=['a-warm-welcome','everyday-greetings','introduce-yourself','family-and-people','food-and-drink','numbers-and-money'];
+ vi.stubGlobal('fetch',vi.fn().mockResolvedValueOnce({ok:true,json:async()=>({id:'u',display_name:'Learner',preferred_language:'yoruba',progress:{total_xp:60,completions:ids.map(lesson_id=>({language:'yoruba',lesson_id,status:'completed',first_choice_score:4,completed_at:'2026-10-09',xp:10}))}})}).mockResolvedValue({ok:true}));
+ render(<App/>);await screen.findByRole('button',{name:'My learning'});fireEvent.click(screen.getByRole('button',{name:'My learning'}));await screen.findByRole('heading',{name:'Your Yorùbá journey'});
+ expect(screen.getByRole('button',{name:'Places Around Me, current'})).toBeTruthy();expect((screen.getByRole('button',{name:'Asking for Directions, locked'}) as HTMLButtonElement).disabled).toBe(true);
+ fireEvent.click(screen.getByRole('button',{name:'Continue the journey'}));expect(screen.getByRole('dialog').textContent).toContain('Places Around Me');expect(screen.getByText('Yorùbá · Unit 3')).toBeTruthy();
+});
+
+it.each([9,10,11,12,13,14])('uses real next-step data after %s Yoruba completions without declaring Foundations complete',async count=>{
+ const lessons=courseLessons('yoruba');
+ const completions=lessons.slice(0,count).map(l=>({language:'yoruba',lesson_id:l.id,status:'completed',first_choice_score:4,completed_at:'2026-10-09',xp:10}));
+ vi.stubGlobal('fetch',vi.fn().mockResolvedValueOnce({ok:true,json:async()=>({id:'u',display_name:'Learner',preferred_language:'yoruba',progress:{total_xp:count*10,completions}})}).mockResolvedValue({ok:true}));
+ render(<App/>);await screen.findByRole('button',{name:'My learning'});fireEvent.click(screen.getByRole('button',{name:'My learning'}));await screen.findByRole('heading',{name:'Your Yorùbá journey'});
+ expect(screen.getByText(`${count} of 14 available lessons complete`)).toBeTruthy();
+ expect(screen.getByRole('heading',{name:'Daily Connections'})).toBeTruthy();
+ expect(document.body.textContent).not.toMatch(/Section 1 complete|Foundations complete/i);
+ if(count<14){
+  expect(screen.getByRole('button',{name:`${lessons[count].title}, current`})).toBeTruthy();
+  for(const lesson of lessons.slice(count+1))expect((screen.getByRole('button',{name:`${lesson.title}, locked`}) as HTMLButtonElement).disabled).toBe(true);
+  fireEvent.click(screen.getByRole('button',{name:'Continue the journey'}));expect(screen.getByRole('dialog').textContent).toContain(lessons[count].title);expect(screen.getByText(`Yorùbá · Unit ${count>=12?5:4}`)).toBeTruthy();
+ }else{expect(screen.getByText('Available lessons complete!')).toBeTruthy();expect(screen.queryByRole('button',{name:'Continue the journey'})).toBeNull();}
 });

@@ -27,3 +27,39 @@ Reviewed 9 October 2026. Each language has Getting Started (three lessons) and E
 ## Scope and maintenance
 
 The new JSON lesson entries list their `sourceIds`. Wrong options reuse sourced forms from this curriculum or English situational interpretations; they are deliberately wrong for the stated context, not purported alternative translations. Preserve Igbo underdots and Yorùbá tone marks in display. These concise lessons introduce practical exchanges, not exhaustive grammar or claims of universal dialect usage. Conversation Practice content and evaluation are unchanged; its sources remain in the existing documentation. No external photographs or other assets were added.
+
+## Yorùbá Foundations expansion: lessons 6–9
+
+- `yoruba-ch6`: [UT Austin COERLL, Yorùbá Yé Mi chapter 6](https://coerll.utexas.edu/yemi/pdfs/yy_ch6.pdf), pp.140–146: ọjà, ìrìn-àjò, kẹ̀kẹ́ (bicycle), Ó súnmọ́; Eélòó ni ata yìí?, Ogúnun náírà ni and Náírà márùnún. Small prices are practice amounts, not current prices.
+- `yoruba-ch4`: [Chapter 4](https://coerll.utexas.edu/yemi/pdfs/yy_ch4.pdf), cardinal-number teaching; chapter 6 p.145 supplies iṣu mẹ́ta (three yams) in context.
+- `yoruba-ch8`: [Chapter 8](https://coerll.utexas.edu/yemi/pdfs/yy_ch8.pdf), pp.187–189: ilé ìwòsàn and ilé-ìwé.
+- `yoruba-ch10`: [Chapter 10](https://coerll.utexas.edu/yemi/pdfs/yy_ch10.pdf), pp.228–230: ilé ìgbọnsẹ̀.
+- `yoruba-ch9`: [Chapter 9](https://coerll.utexas.edu/yemi/pdfs/yy_ch9.pdf), p.215: jìnnà sí (far from).
+- `yoruba-ch11`: [Chapter 11](https://coerll.utexas.edu/yemi/pdfs/yy_ch11.pdf), pp.267–268: Títì wo ló lọ sí ṣọ́ọ̀ṣì?; ọwọ́ òsì; Báwo ni o ṣe máa dé ọjà?. The textbook's legacy font is transcribed into Unicode, preserving underdots and tone marks. Only language models are reused; original contextual prompts avoid importing dated social claims from the textbook.
+
+Each new lesson has four exercises. Bicycle terminology is explicitly scoped to the source's bicycle meaning; no transport fare, safety or real-world price claim is made. Existing lessons 1–5 and the Igbo/Hausa curricula remain unchanged.
+
+## Yorùbá Foundations expansion: Unit 4 — Daily Connections (lessons 10–12)
+
+- `yoruba-ch3`: [UT Austin COERLL, Yorùbá Yé Mi chapter 3](https://coerll.utexas.edu/yemi/pdfs/yy_ch3.pdf), printed pp.72 and 76: ọ̀la (tomorrow) and Mo máa lọ (I will go). Lesson 10 practises day-level planning, not clock-time telling.
+- `yoruba-ch7`: [Chapter 7](https://coerll.utexas.edu/yemi/pdfs/yy_ch7.pdf), pp.163, 171, 180–182: Mo fẹ́ sùn (I want to sleep), oúnjẹ àárọ̀ (morning meal), Irú oúnjẹ wo ni ẹ ní?, the Eélòó ni ẹ ń ta [item]? price pattern, Rárá, kò gbà, Ẹ gba owó and Ẹ fún mi ní àbùlà. The price question substitutes already-taught ìrẹsì into the sourced productive pattern; no current price is asserted. Àbùlà is the combined stew requested in the source dialogue. Legacy PDF fonts are transcribed as Unicode, retaining vowel underdots and tone marks.
+- `yoruba-phrases`: [Omniglot, useful Yorùbá phrases](https://www.omniglot.com/language/phrases/yoruba.php), contributed by Adedamola Olofa: Ẹ jọ̀wọ́ (please), Jọwọ, tun un sọ (please say that again), and Ẹ ṣé (respectful thank you). The repetition request uses the same imperative pattern with the documented respectful please opener; missing tone marks in the source are restored in tún and sọ.
+
+All twelve contextual prompts and explanations are original. Distractors reuse published forms or English situational interpretations. No media is attached. Lessons 1–9, their IDs/media, and Igbo/Hausa content are preserved. Unit 4 ends the currently available lessons, not Section 1: Unit 5 is planned but is not implemented or presented as available.
+
+## Unit 5 — Section Review: Visual Review
+
+Eight image-choice questions review the approved forms màmá, ìrẹsì, omi, ọjà, ilé ìwòsàn, ọwọ́ òsì, kẹ̀kẹ́ and àbùlà. Correct forms draw on the existing chapter 5–8 and 11 references above and the supplied image/answer mappings. Mother identification includes a family-relationship context; the image alone cannot establish parenthood. The àbùlà question identifies the combined stew, not the accompanying àmàlà mound.
+
+- `yoruba-uw-directions`: [UW-Madison, Adeola Agoke, Giving Directions](https://wisc.pb.unizin.org/yorubadictionary/chapter/giving-directions/): ọ̀tún and tààrà support related direction distractors. The existing respectful/side expression ọwọ́ òsì is retained as the approved correct answer.
+- `yoruba-uw-transport`: [UW-Madison, Materials for Yoruba Learners, Transportation](https://wisc.pb.unizin.org/yoruba/chapter/transportation/): bọ́ọ̀sì, dáńfó and ọ̀kadà support vehicle distractors. These alternatives are not new assessed vocabulary. Kẹ̀kẹ́ retains the bicycle sense already taught.
+
+The shared player reuses proportional rounded image media and text answer buttons. Descriptive alt text avoids the correct Yorùbá answer. Visual Review has eight exercises with four options each; existing lessons retain four exercises with three options. Completing it ends the currently available content, not Foundations: lessons 14–15 and any section bonus remain unimplemented.
+
+Database prerequisite: apply migration `0012_variable_lesson_scores` before recording eight-exercise scores (`cd backend`, then `.\.venv\Scripts\python.exe -m alembic upgrade head`). It removes only the fixed score ceiling while retaining nonnegative scores and the 10 XP constraint; the API validates the authored answer count and option ranges. Existing rows are preserved. No database migration was applied as part of this implementation.
+
+## Unit 5 — Build the Sentence (lesson 14)
+
+Eight sentence-order exercises reuse the exact approved sentences from Units 1–4: Ẹ káàárọ̀; Orúkọ mi ni Adé; Eélòó ni ata yìí?; Báwo ni o ṣe máa dé ọjà?; Mo máa lọ; Mo fẹ́ sùn; Ẹ jọ̀wọ́, tún un sọ; Ẹ fún mi ní àbùlà. Sources are the existing chapter 3, 5, 6, 7 and 11 and phrase references above; no new language forms are introduced. The price prompt is retained exactly as requested, with the previously taught ata yìí sentence.
+
+`sentence_order` uses authored scrambled `{id,text}` tiles and `correctOrder` tile IDs. Punctuation remains attached to its token. Check submits the first full tile-ID sequence; later interaction cannot replace that scored submission. Server validation requires every authored ID exactly once, and compares ordered token text so identical words with different IDs remain equivalent. Choice-exercise requests still submit integer option indexes. No new migration is needed; eight-point scores require the existing `0012_variable_lesson_scores` migration. Lesson 14 follows Visual Review; lesson 15 and the section bonus are not implemented, and Foundations is not declared complete.

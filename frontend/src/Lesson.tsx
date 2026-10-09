@@ -1,16 +1,18 @@
+import {LessonMedia} from './LessonMedia';
 import {LessonCelebration} from './LessonCelebration';
 import {useEffect, useRef, useState} from 'react';
 
 import {BookOpen, Check, X} from 'lucide-react';
 
-import type {LessonContent} from './lessonContent';
+import {correctAnswerText, type LessonContent, type ExerciseAnswer} from './lessonContent';
+import {SentenceOrder} from './SentenceOrder';
 
 import './lesson.css';
 import {courses, type Language} from './courses';
 
 
 
-export function Lesson({content, onClose, onComplete, language='yoruba', unitNumber=1}: {content: LessonContent; language?: Language; unitNumber?: number; onClose: () => void; onComplete?: (answers:number[]) => Promise<void>}) {
+export function Lesson({content, onClose, onComplete, language='yoruba', unitNumber=1}: {content: LessonContent; language?: Language; unitNumber?: number; onClose: () => void; onComplete?: (answers:ExerciseAnswer[]) => Promise<void>}) {
 
   const [celebrationFinished,setCelebrationFinished]=useState(false);
   const returnTimer=useRef<number|undefined>(undefined);
@@ -20,9 +22,10 @@ export function Lesson({content, onClose, onComplete, language='yoruba', unitNum
 
   const [answer, setAnswer] = useState<string | null>(null);
 
+  const [feedbackCorrect,setFeedbackCorrect]=useState(false);
   const [correct, setCorrect] = useState(0);
 
-  const answers = useRef<number[]>([]);
+  const answers = useRef<ExerciseAnswer[]>([]);
 
   const saving = useRef(false);
 
@@ -118,19 +121,23 @@ export function Lesson({content, onClose, onComplete, language='yoruba', unitNum
         </div>
       </div>
 
+      {exercise.media&&<LessonMedia key={exercise.media.src} media={exercise.media}/>}
       <h3 ref={heading} tabIndex={-1}>{exercise.prompt}</h3>
 
-      <div className="lesson-options">{exercise.options.map(option => <button key={option} disabled={answer !== null} className={`lesson-option ${answer === option ? 'chosen' : ''}`} onClick={() => {
+      {exercise.type==='sentence_order'?<SentenceOrder key={exercise.id} exercise={exercise} checked={answer!==null} onCheck={(ids,isCorrect)=>{
+        if(answers.current[step]===undefined){answers.current[step]=ids; if(isCorrect)setCorrect(value=>value+1);}
+        setAnswer(ids.join('|'));setFeedbackCorrect(isCorrect);
+      }}/> : <div className="lesson-options">{exercise.options.map(option => <button key={option} disabled={answer !== null} className={`lesson-option ${answer === option ? 'chosen' : ''}`} onClick={() => {
 
-        if(answer !== null)return; answers.current[step]=exercise.options.indexOf(option); setAnswer(option); if (option === exercise.answer) setCorrect(value => value + 1);
+        if(answer !== null)return; answers.current[step]=exercise.options.indexOf(option); setAnswer(option);setFeedbackCorrect(option===exercise.answer); if (option === exercise.answer) setCorrect(value => value + 1);
 
-      }}>{option}</button>)}</div>
+      }}>{option}</button>)}</div>}
 
-      {answer !== null && <div className="lesson-feedback" data-correct={answer===exercise.answer} role="status">
+      {answer !== null && <div className="lesson-feedback" data-correct={feedbackCorrect} role="status">
 
-        <strong>{answer === exercise.answer ? <><Check size={18} aria-hidden="true"/> Correct!</> : 'Not quite — let’s learn it.'}</strong>
+        <strong>{feedbackCorrect ? <><Check size={18} aria-hidden="true"/> Correct!</> : 'Not quite — let’s learn it.'}</strong>
 
-        {answer !== exercise.answer && <p>Correct answer: {exercise.answer}</p>}
+        {!feedbackCorrect && <p>Correct answer: {correctAnswerText(exercise)}</p>}
 
         <p>{exercise.explanation}</p>
 
