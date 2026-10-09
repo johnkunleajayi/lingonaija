@@ -45,6 +45,9 @@ def upsert_google_user(db: Session, claims: dict) -> User:
                 raise HTTPException(409, "Account identity conflict")
     if not user.is_active:
         raise HTTPException(403, "Account unavailable")
+    picture = claims.get("picture")
+    if isinstance(picture, str) and picture.strip():
+        user.avatar_url = picture.strip()
     return user
 
 def current_user(request: Request, db: Session = Depends(get_db)) -> User:
@@ -93,7 +96,7 @@ async def google_callback(request: Request, db: Session = Depends(get_db)):
 def me(response: Response, user: User = Depends(current_user), db: Session = Depends(get_db)):
     from app.learning import progress
     response.headers["Cache-Control"] = "no-store"
-    return {"id": str(user.id), "display_name": user.display_name, "preferred_language": user.preferred_language,
+    return {"id": str(user.id), "display_name": user.display_name, "avatar_url": user.avatar_url, "preferred_language": user.preferred_language,
             "progress": progress(db, user.id), "enrollments": list(db.scalars(select(Enrollment.language).where(Enrollment.user_id == user.id).order_by(Enrollment.language)))}
 
 @router.post("/logout", status_code=204)

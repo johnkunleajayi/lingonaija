@@ -92,3 +92,42 @@ def test_https_cookie_and_session_rotation(db, monkeypatch):
     assert 'HttpOnly' in response.headers['set-cookie']
     assert db.get(AuthSession, digest('previous-session')) is None
     assert db.scalar(select(AuthSession)) is not None
+
+@pytest.mark.parametrize('picture',[None,'', '   '])
+def test_users_without_google_picture_remain_compatible(db,picture):
+    user=upsert_google_user(db,{**claims(),'picture':picture});db.commit()
+    assert user.avatar_url is None
+    db.add(AuthSession(token_hash=digest('avatar-test'),user_id=user.id,expires_at=datetime.now(timezone.utc)+timedelta(days=1)));db.commit()
+    client=TestClient(app);client.cookies.set('lingonaija_session','avatar-test')
+    response=client.get('/api/auth/me')
+    assert response.status_code==200
+    assert response.json()['avatar_url'] is None
+
+
+def test_google_picture_creation_update_and_missing_picture_preservation(db):
+    user=upsert_google_user(db,{**claims(),'picture':'https://example.test/first.png'});db.commit()
+    original_id=user.id
+    assert user.avatar_url=='https://example.test/first.png'
+    returning=upsert_google_user(db,{**claims(),'picture':'https://example.test/new.png'});db.commit()
+    assert returning.id==original_id
+    assert returning.avatar_url=='https://example.test/new.png'
+    assert upsert_google_user(db,claims()).avatar_url=='https://example.test/new.png'
+    assert len(list(db.scalars(select(User))))==1
+
+
+def test_existing_user_receives_avatar_through_successful_callback(db,monkeypatch):
+    user=upsert_google_user(db,claims());db.commit()
+    original_id=user.id
+    async def verified_identity(request):
+        return {'userinfo':{**claims(),'picture':'https://example.test/google.png'}}
+    monkeypatch.setattr(oauth.google,'authorize_access_token',verified_identity)
+    client=TestClient(app)
+    response=client.get('/api/auth/google/callback',follow_redirects=False)
+    assert 'signed_in=1' in response.headers['location']
+    db.refresh(user)
+    assert user.id==original_id
+    assert user.avatar_url=='https://example.test/google.png'
+    me=client.get('/api/auth/me')
+    assert me.status_code==200
+    assert me.json()['avatar_url']==user.avatar_url
+    assert me.json()['id']==str(original_id)

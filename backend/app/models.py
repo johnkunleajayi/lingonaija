@@ -9,6 +9,7 @@ class User(Base):
     id: Mapped[uuid.UUID] = mapped_column(primary_key=True, default=uuid.uuid4)
     email: Mapped[str] = mapped_column(String(320), unique=True, index=True)
     display_name: Mapped[str] = mapped_column(String(100))
+    avatar_url: Mapped[str | None] = mapped_column(String(2048), nullable=True)
     google_subject: Mapped[str | None] = mapped_column(String(255), unique=True, nullable=True)
     preferred_language: Mapped[str] = mapped_column(String(20), default="yoruba", server_default="yoruba")
     is_active: Mapped[bool] = mapped_column(Boolean, default=True, server_default="true")

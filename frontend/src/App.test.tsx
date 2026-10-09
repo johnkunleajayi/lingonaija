@@ -174,7 +174,7 @@ it.each([['yoruba','Yorùbá',5],['igbo','Igbo',5],['hausa','Hausa',5]])('honest
  const scroll=vi.fn();Object.defineProperty(HTMLElement.prototype,'scrollIntoView',{configurable:true,value:scroll});
  render(<App/>);await screen.findByRole('button',{name:'Sign out'});fireEvent.click(screen.getAllByRole('button',{name:'Start Learning Free'})[0]);await screen.findByRole('heading',{name:`Your ${name} journey`});
  expect(screen.queryByRole('button',{name:'Continue the journey'})).toBeNull();
- expect(screen.getByRole('link',{name:'Go to conversation practice'}).getAttribute('href')).toBe('#conversation-practice');
+ expect(screen.queryByRole('link',{name:'Go to conversation practice'})).toBeNull();
  const progress=screen.getByRole('progressbar',{name:'Available lesson progress'});
  expect(progress.getAttribute('aria-valuemax')).toBe(String(size));expect(progress.getAttribute('aria-valuenow')).toBe(String(size));
  expect(document.body.textContent).not.toContain('100%');expect(screen.queryByText('COMING LATER')).toBeNull();
@@ -211,4 +211,44 @@ it.each([['yoruba','Yorùbá'],['igbo','Igbo'],['hausa','Hausa']])('opens Unit 2
  expect(screen.getByText('Complete Family & People to unlock')).toBeTruthy();
  fireEvent.click(screen.getByRole('button',{name:'Continue the journey'}));
  expect(screen.getByRole('dialog').textContent).toContain('Family & People');expect(screen.getByText(`${name} · Unit 2`)).toBeTruthy();
+});
+it.each([['yoruba','Yorùbá','Adé'],['igbo','Igbo','Ada'],['hausa','Hausa','Amina']])('places the unlocked %s practice inside the path immediately after the welcome lesson',async(language,name,companion)=>{
+ vi.stubGlobal('fetch',vi.fn().mockResolvedValueOnce({ok:true,json:async()=>({id:'123',display_name:'Learner',preferred_language:language,progress:{total_xp:10,current_streak:2,longest_streak:3,completions:[{language,lesson_id:'a-warm-welcome',status:'completed',first_choice_score:4,completed_at:'2026-10-09',xp:10}]}})}).mockResolvedValue({ok:true}));
+ const {container}=render(<App/>);await screen.findByRole('button',{name:'Sign out'});fireEvent.click(screen.getAllByRole('button',{name:'Start Learning Free'})[0]);await screen.findByRole('heading',{name:`Your ${name} journey`});
+ const milestone=container.querySelector('[data-path-kind="conversation"]')!;
+ expect(milestone.previousElementSibling?.textContent).toContain('A Warm Welcome');
+ expect(milestone.nextElementSibling?.textContent).toContain('Everyday Greetings');
+ expect(milestone.closest('.path')).toBeTruthy();
+ expect(screen.queryByText('LET’S GROW, TOGETHER')).toBeNull();
+ expect(screen.getByText('Complete each lesson to unlock the next step.')).toBeTruthy();
+ expect(screen.getByRole('button',{name:'Continue the journey'})).toBeTruthy();
+ expect(milestone.querySelector('.milestone')).toBeNull();
+ expect(milestone.textContent).not.toMatch(/Your first conversation|Unlocked ·|no rewards or saved results/);
+ expect(milestone.textContent).toContain('3 short greeting turns');
+ expect(screen.getByText('Replay lesson · no additional XP')).toBeTruthy();
+ expect(milestone.contains(screen.getByRole('button',{name:`Practise with ${companion}`}))).toBe(true);
+ expect(container.querySelectorAll('#conversation-practice')).toHaveLength(1);
+ expect(container.querySelector('.sidebar')).toBeNull();expect(container.querySelector('.right')).toBeNull();
+ expect(screen.queryByText('Find your rhythm')).toBeNull();expect(screen.queryByText('Language is belonging.')).toBeNull();
+ expect(container.querySelector('img[src*="dashboard-reference"]')).toBeNull();
+ expect(screen.getByLabelText('Daily learning streak').textContent).toContain('2 day streak');
+});
+it('limits logged-out navigation to Discover and restores it after sign-out',async()=>{
+ render(<App/>);await screen.findByRole('button',{name:'Discover'});expect(screen.queryByRole('button',{name:'My learning'})).toBeNull();expect(document.querySelector('.dashboard')).toBeNull();cleanup();
+ vi.stubGlobal('fetch',vi.fn().mockResolvedValueOnce({ok:true,json:async()=>({id:'u',display_name:'Chidi Okafor',preferred_language:'igbo'})}).mockResolvedValue({ok:true}));render(<App/>);
+ await screen.findByRole('button',{name:'My learning'});expect(screen.queryByRole('button',{name:'Discover'})).toBeNull();
+ fireEvent.click(screen.getByRole('button',{name:'My learning'}));await screen.findByRole('heading',{name:'Your Igbo journey'});
+ fireEvent.click(screen.getByRole('button',{name:'Sign out'}));await screen.findByRole('button',{name:'Discover'});expect(screen.queryByRole('button',{name:'My learning'})).toBeNull();expect(document.querySelector('.dashboard')).toBeNull();
+});
+it.each(['yoruba','igbo','hausa'])('uses the authenticated first name in the %s greeting',async language=>{
+ vi.stubGlobal('fetch',vi.fn().mockResolvedValueOnce({ok:true,json:async()=>({id:'u',display_name:'  Zainab   Bello ',preferred_language:language})}).mockResolvedValue({ok:true}));render(<App/>);await screen.findByRole('button',{name:'My learning'});fireEvent.click(screen.getByRole('button',{name:'My learning'}));
+ await waitFor(()=>expect(document.querySelector('.welcome .eyebrow')?.textContent).toMatch(/, ZAINAB!$/));expect(document.querySelector('.welcome .eyebrow')?.textContent).not.toContain('EXPLORER');
+});
+it('shows an existing avatar and falls back to initials when loading fails',async()=>{
+ vi.stubGlobal('fetch',vi.fn().mockResolvedValueOnce({ok:true,json:async()=>({id:'u',display_name:'Chidi Okafor',avatar_url:'https://example.test/avatar.png',preferred_language:'igbo'})}).mockResolvedValue({ok:true}));render(<App/>);
+ const avatar=await screen.findByRole('img',{name:"Chidi Okafor's profile"});expect(avatar.getAttribute('src')).toBe('https://example.test/avatar.png');fireEvent.error(avatar);
+ expect(screen.getByRole('img',{name:"Chidi Okafor's initials"}).textContent).toBe('CO');expect(document.querySelector('.user-name')?.textContent).toBe('Chidi Okafor');
+});
+it('uses initials when no avatar is available',async()=>{
+ vi.stubGlobal('fetch',vi.fn().mockResolvedValueOnce({ok:true,json:async()=>({id:'u',display_name:'Ada',preferred_language:'igbo'})}).mockResolvedValue({ok:true}));render(<App/>);expect((await screen.findByRole('img',{name:"Ada's initials"})).textContent).toBe('A');
 });

@@ -1,0 +1,7 @@
+.product-header .user-identity {display:flex;align-items:center;gap:9px;min-width:0;}
+.product-header .user-avatar {width:36px;height:36px;border-radius:50%;object-fit:cover;flex-shrink:0;}
+.product-header .user-initials {display:grid;place-items:center;background:var(--soft);color:var(--brand-readable);font-size:13px;font-weight:750;}
+.product-header .user-name {font-size:14px;line-height:1.35;max-width:180px;overflow-wrap:anywhere;}
+@media(max-width:1100px){.product-header .user-name {max-width:100px;}}
+@media(max-width:760px){.product-header .account-controls {flex-wrap:wrap;justify-content:flex-end;max-width:145px;}.product-header .user-name {max-width:85px;font-size:12px;}.product-header .user-avatar {width:30px;height:30px;}.product-header .user-identity {gap:6px;}}
+@media(max-width:380px){.product-header .account-controls {max-width:125px;}.product-header .user-name {max-width:70px;}}

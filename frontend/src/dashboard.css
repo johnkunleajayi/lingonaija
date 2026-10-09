@@ -1,0 +1,71 @@
+/* Authenticated dashboard only: a wide, connected learning journey. */
+.app .dashboard {display:block;max-width:1120px;padding:42px 32px 80px;margin:auto;}
+.dashboard .learner>h1 {font-size:clamp(28px,3.2vw,40px);margin:8px 0;letter-spacing:-1.2px;}
+.dashboard .learner>p {color:var(--muted);font-size:16px;}
+.dashboard .learner-stats {grid-template-columns:minmax(0,2fr) minmax(0,1fr);gap:20px;margin:26px 0 20px;}
+.dashboard .learner-level,.dashboard .streak-summary {background:var(--surface);border:1px solid var(--border);box-shadow:var(--shadow);border-radius:22px;padding:22px 26px;}
+.dashboard .learner-level-heading {font-size:18px;}
+.dashboard .learner-level-track {height:8px;margin-top:12px;}
+.dashboard .streak-summary {display:flex;align-items:center;gap:18px;font-size:13px;}
+.dashboard .streak-summary>svg {width:48px;height:48px;padding:12px;border-radius:50%;background:#ffeddc;color:#ba5317;flex-shrink:0;}
+.dashboard .streak-summary strong {font-size:22px;color:var(--ink);}
+.dashboard .welcome {min-height:230px;padding:28px 32px;border-radius:24px;border-left:4px solid var(--brand);background:linear-gradient(115deg,var(--soft) 55%,#b7e5c9);margin-bottom:22px;gap:20px;}
+.dashboard .welcome h2 {font-size:clamp(23px,2.6vw,30px);max-width:560px;}
+.dashboard .welcome p {font-size:15px;margin-bottom:18px;}
+.dashboard .dashboard-companion {position:relative;flex:0 0 220px;align-self:stretch;display:flex;align-items:flex-end;justify-content:center;}
+.dashboard .welcome .character {width:210px;height:220px;margin:0 0 -28px;}
+.dashboard .companion-greeting {position:absolute;right:-6px;top:0;z-index:2;background:var(--surface);color:var(--brand-readable);padding:12px 18px;border-radius:22px 22px 22px 4px;font-size:19px;font-weight:750;box-shadow:var(--shadow);}
+.dashboard .learning-journey {border-radius:24px;padding:30px 32px;}
+.dashboard .path-title h2 {font-size:27px;}
+.dashboard .path {max-width:720px;padding:6px 0 24px;position:relative;}
+.dashboard .unit {margin:28px 0 20px;padding-top:18px;position:relative;background:var(--surface);z-index:1;}
+.dashboard .lesson {margin:0;min-height:108px;padding:18px 16px;gap:24px;position:relative;}
+.dashboard .lesson:before {content:'';position:absolute;left:48px;top:0;bottom:0;border-left:2px dashed var(--border);}
+.dashboard .node {position:relative;width:64px;height:64px;border-radius:22px;}
+.dashboard .lesson h4 {font-size:19px;}
+.dashboard .lesson small {font-size:11px;letter-spacing:.5px;}
+.dashboard .lesson span {font-size:14px;}
+.dashboard .path-practice {position:relative;margin:4px 0 4px 8px;border:1px solid var(--border);border-radius:18px;background:var(--soft);}
+.dashboard .milestone {margin:0;border:0;background:transparent;padding:18px 20px;gap:18px;}
+.dashboard .milestone>div {flex:1;}
+.dashboard .milestone strong {font-size:17px;}
+.dashboard .milestone small {font-size:13px;}
+.dashboard .path-practice .conversation-card {margin:0;border:0;border-top:1px solid var(--border);border-radius:0 0 18px 18px;background:transparent;padding:20px;}
+.dashboard .conversation-heading h2 {font-size:22px;}
+.dashboard .conversation-heading .character {width:72px;height:86px;}
+.dashboard .path-practice.locked {background:var(--bg);}
+.dark .dashboard .welcome {background:linear-gradient(115deg,#123e2b 55%,#205b3d);}
+.dark .dashboard .streak-summary>svg {background:#493823;color:#ffbc74;}
+@media(max-width:760px){
+ .app .dashboard {padding:28px 20px 56px;}
+ .dashboard .learner-stats {grid-template-columns:1fr;gap:12px;}
+ .dashboard .learner-level,.dashboard .streak-summary {padding:18px 20px;}
+ .dashboard .streak-summary strong {font-size:20px;margin-bottom:2px;}
+ .dashboard .welcome {padding:24px;gap:12px;min-height:220px;}
+ .dashboard .dashboard-companion {flex-basis:130px;}
+ .dashboard .welcome .character {width:140px;height:170px;margin-bottom:-24px;}
+ .dashboard .companion-greeting {font-size:15px;padding:8px 12px;right:0;}
+ .dashboard .learning-journey {padding:24px 20px;}
+ .dashboard .path-title {flex-wrap:wrap;gap:12px;}
+ .dashboard .path-title h2 {font-size:24px;}
+}
+@media(max-width:540px){
+ .app .dashboard {padding-inline:14px;}
+ .dashboard .welcome {display:block;padding:22px;}
+ .dashboard .welcome>div:first-child {max-width:none;}
+ .dashboard .dashboard-companion {height:130px;margin-top:20px;justify-content:flex-end;}
+ .dashboard .welcome .character {height:155px;width:155px;margin-bottom:-22px;}
+ .dashboard .companion-greeting {right:135px;top:22px;}
+ .dashboard .learning-journey {padding:22px 14px;}
+ .dashboard .lesson {padding:16px 4px;gap:18px;}
+ .dashboard .lesson:before {left:32px;}
+ .dashboard .node {width:56px;height:56px;border-radius:19px;}
+ .dashboard .lesson h4 {font-size:17px;}
+ .dashboard .path-practice {margin-left:0;}
+ .dashboard .milestone {padding:16px 12px;gap:10px;}
+ .dashboard .milestone strong {font-size:15px;}
+ .dashboard .milestone small {font-size:12px;}
+ .dashboard .conversation-heading {gap:8px;}
+ .dashboard .conversation-heading h2 {font-size:20px;}
+ .dashboard .path-practice .conversation-card {padding:16px 12px;}
+}

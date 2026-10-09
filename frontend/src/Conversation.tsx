@@ -25,7 +25,7 @@ export function Conversation({language='yoruba'}:{language?:Language}){
   finally{lock.current=false;setBusy(false)}
  }
  return <section className="conversation-card" aria-label="Conversation practice">
-  <div className="conversation-heading"><div><span className="eyebrow">REAL-LIFE CONNECTIONS</span><h2>Conversation practice with {character}</h2><p>{title} · 3 short greeting turns · no rewards or saved results</p></div><Character language={language}/></div>
+  <div className="conversation-heading"><div><span className="eyebrow">REAL-LIFE CONNECTIONS</span><h2>Conversation practice with {character}</h2><p>{title} · 3 short greeting turns</p></div><Character language={language}/></div>
   {!opened?<button className="primary" disabled={busy} onClick={()=>{void call(true)}}>{busy?'Opening…':`Practise with ${character}`}</button>:<>
    {finished?<><h3>Conversation complete!</h3><p>You welcomed {character} and exchanged everyday greetings.</p></>:<>
     <p className="conversation-turn"><strong>Turn {(turn?.index??0)+1} of 3 · {character}</strong></p><p className="conversation-prompt">{turn?.ade}</p>

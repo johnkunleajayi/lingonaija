@@ -80,13 +80,6 @@
 .app .situation {background: var(--bg); padding: 30px 24px;}
 .app .situation p {font-size: 15px;}
 /* The learning journey is the main surface; statistics support it. */
-.dashboard {max-width: 1380px; grid-template-columns: 155px minmax(0,1fr) 240px; gap: 28px; padding: 44px 32px 80px;}
-.sidebar {border: 0; padding-right: 0;}
-.sidebar .eyebrow {font-size: 10px;}
-.side-current {font-size: 14px; padding: 16px 12px; color: var(--brand-readable); background: var(--surface); border: 1px solid var(--border);}
-.side-message {margin-top: 60px; padding: 12px;}
-.side-message p {font-size: 14px;}
-.sidebar > small {font-size: 12px;}
 .learner > h1 {font-size: clamp(30px,3vw,40px); letter-spacing: -1.3px; margin: 10px 0;}
 .learner > p {font-size: 16px;}
 .learner-stats {display: grid; grid-template-columns: minmax(0,1.5fr) minmax(0,1fr); gap: 16px; margin: 20px 0;}
@@ -117,7 +110,6 @@
 .unit h3 {font-size: 21px; margin-top: 9px;}
 .lesson {gap: 20px; margin-top: 22px; margin-bottom: 22px; min-height: 94px; padding: 12px 0;}
 .lesson > div {flex: 1; overflow-wrap: anywhere;}
-.offset-0 {margin-left: 12px;}.offset-1 {margin-left: 18%;}.offset-2 {margin-left: 28%;}
 .node {width: 72px; height: 72px; border-radius: 25px; background: #c7efda; color: #004b35; border-bottom-color: #74c99c; box-shadow: 0 8px 18px #00875310;}
 .node.current {background: #008753; color: white; border-bottom-color: #004b35; outline-width: 5px; box-shadow: 0 0 0 8px #00875330,0 12px 22px #00875320;}
 .node.current:hover {background: #006f45;}
@@ -129,10 +121,6 @@
 .milestone strong {font-size: 16px;}
 .milestone small {font-size: 13px; display: block; margin-top: 5px;}
 .milestone > svg,.milestone > a {flex-shrink: 0;}.milestone a {color: var(--brand-readable); margin-left: auto; display: grid; place-items: center; min-width: 44px; min-height: 44px; border-radius: 12px; background: var(--surface);}
-.daily,.culture {border-radius: 22px; padding: 24px;}
-.daily h3,.culture h3 {font-size: 22px;}
-.daily p,.culture p {font-size: 15px;}.daily small,.culture small {font-size: 13px; line-height: 1.7; display: block; margin-top: 8px;}
-.culture {background: var(--surface);}.culture > svg {color: var(--accent);}
 /* Lessons and typed practice share the same comfortable cards and feedback. */
 .backdrop {background: #05261dc4; backdrop-filter: blur(5px); padding: 24px; z-index: 20;}
 .lesson-player {max-width: 640px; border: 1px solid var(--border); border-radius: 28px; padding: 42px 36px; box-shadow: 0 24px 80px #0003;}
@@ -165,11 +153,9 @@
 .character-reply strong {color: var(--brand-readable);}.character-reply p {margin-top: 8px; color: var(--ink);}
 .conversation-card > .account-button {margin-top: 20px; min-height: 44px; font-size: 14px;}
 @media(max-width:1200px) {
-  .dashboard {grid-template-columns: minmax(0,1fr) 240px; max-width: 1120px;}.sidebar {display: none;}.right {display: block;}
   .product-header {gap: 28px; padding-inline: 28px;}.product-header .account-name {display: none;}
 }
 @media(max-width:900px) {
-  .dashboard {grid-template-columns: minmax(0,1fr); max-width: 800px; padding: 32px 28px 64px;}.right {display: none;}
   .product-header {gap: 20px;}.product-header nav {gap: 18px;}.product-header .actions {gap: 8px;}
   .app .premium-hero {gap: 36px; padding: 56px 32px 76px;}.app .premium-hero h1 {font-size: 48px;}
   .app .photo-world {height: 420px;}
@@ -191,12 +177,11 @@
   .app .hero-ctas {gap: 20px;}.app .photo-world {height: 420px; margin-inline: auto; max-width: 480px;}.app .language-ribbon {gap: 16px;}.app .language-ribbon > span {font-size: 10px;}
   .app .premium-cards {grid-template-columns: 1fr;}.app .language-info {padding: 26px;}.app .language-info p {font-size: 16px;}
   .app .card-top {font-size: 11px;}.app .situations {grid-template-columns: repeat(2,minmax(0,1fr));}
-  .app .situation {padding: 24px 18px;}.app .situation h3 {font-size: 19px;}.app .situation p {font-size: 14px;}
-  .dashboard {padding: 28px 20px 56px;}.learner > h1 {font-size: 32px;}.learner-stats {gap: 12px;}
+  .app .situation {padding: 24px 18px;}.app .situation h3 {font-size: 19px;}.app .situation p {font-size: 14px;}.learner > h1 {font-size: 32px;}.learner-stats {gap: 12px;}
   .welcome {padding: 24px; min-height: 200px;}.welcome h2 {font-size: 26px;}.welcome .eyebrow {font-size: 10px;}
   .welcome .character {width: 130px; height: 175px; margin: 0 -16px 0 0;}.welcome .primary {font-size: 14px; padding: 12px 14px;}
   .learning-journey {padding: 24px; border-radius: 24px;}.path-title {flex-wrap: wrap; gap: 12px;}.path-title h2 {font-size: 24px;}
-  .path-title strong {font-size: 13px;}.path {max-width: 480px;}.offset-0 {margin-left: 0;}.offset-1 {margin-left: 12%;}.offset-2 {margin-left: 20%;}
+  .path-title strong {font-size: 13px;}.path {max-width: 480px;}
   .lesson {gap: 18px;}.node {width: 66px; height: 66px; border-radius: 23px;}.lesson h4 {font-size: 18px;}
   .milestone {padding: 16px; gap: 10px;}.milestone strong {font-size: 16px;}.milestone small {font-size: 13px;}
   .conversation-card {padding: 24px;}.conversation-heading h2 {font-size: 23px;}.conversation-heading .character {width: 76px; height: 102px;}
@@ -207,14 +192,12 @@
   .app .photo-world {height: 340px; width: calc(100% - 20px);}.app .greeting-float {left: -8px; padding: 12px 14px;}.app .greeting-float strong {font-size: 22px;}
   .app .orbit-letter {right: -10px; width: 58px; height: 58px;}.app .mini-progress {left: 0; right: -8px; padding: 16px 12px; gap: 10px;}
   .app .mini-progress strong {font-size: 13px;}.app .mini-progress small {font-size: 12px;}.app .mini-icon {width: 38px; height: 38px;}
-  .app .situations {grid-template-columns: 1fr;}.app .language-ribbon {gap: 12px;}.app .language-ribbon strong {font-size: 20px;}
-  .dashboard {padding: 24px 16px 48px;}.learner > h1 {font-size: 30px;}.learner-stats {grid-template-columns: 1fr; gap: 10px; margin: 20px 0;}
+  .app .situations {grid-template-columns: 1fr;}.app .language-ribbon {gap: 12px;}.app .language-ribbon strong {font-size: 20px;}.learner > h1 {font-size: 30px;}.learner-stats {grid-template-columns: 1fr; gap: 10px; margin: 20px 0;}
   .streak-summary {padding: 14px 18px; font-size: 13px;}.streak-summary strong {display: inline; font-size: 16px; margin-right: 8px;}
   .learner-stats .learner-level {padding: 16px 18px;}.welcome {padding: 22px 18px; min-height: 220px;}
   .welcome .character {position: absolute; right: -12px; bottom: 0; width: 105px; height: 140px; opacity: .35; margin: 0;}
   .welcome > div {max-width: 100%;}.welcome .primary {font-size: 14px; gap: 8px;}.welcome h2 {font-size: 26px;}
-  .learning-journey {padding: 24px 18px;}.path-title h2 {font-size: 23px;}.unit h3 {font-size: 20px;}.unit small {font-size: 10px;}
-  .offset-1 {margin-left: 7%;}.offset-2 {margin-left: 12%;}.lesson {gap: 15px;}.node {width: 60px; height: 60px; border-radius: 21px;}
+  .learning-journey {padding: 24px 18px;}.path-title h2 {font-size: 23px;}.unit h3 {font-size: 20px;}.unit small {font-size: 10px;}.lesson {gap: 15px;}.node {width: 60px; height: 60px; border-radius: 21px;}
   .lesson h4 {font-size: 17px;}.lesson small {font-size: 10px;}.lesson span {font-size: 12px;}.milestone {flex-wrap: wrap;}.milestone > div {flex: 1;}
   .conversation-card {padding: 22px 18px;}.conversation-heading {gap: 10px;}.conversation-heading h2 {font-size: 22px;}
   .conversation-heading .character {width: 52px; height: 85px;}.conversation-card p {font-size: 15px;}.conversation-prompt {padding: 16px!important;}

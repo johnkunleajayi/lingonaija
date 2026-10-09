@@ -1,7 +1,7 @@
 import {useEffect,useRef,useState} from 'react';
 import type {Language} from './courses';
 export type Progress={current_streak?:number;longest_streak?:number;total_xp:number;completions:{language:Language;lesson_id:string;status:'completed';first_choice_score:number;completed_at:string;xp:number}[]};
-export type User={id:string;display_name:string;preferred_language:Language;enrollments?:Language[];progress?:Progress};
+export type User={id:string;display_name:string;avatar_url?:string|null;preferred_language:Language;enrollments?:Language[];progress?:Progress};
 export function useAuth(){
  const [user,setUser]=useState<User|null>(null);
  const [loading,setLoading]=useState(true);
