@@ -1,6 +1,6 @@
 // @vitest-environment jsdom
 import React from 'react';
-import {render,screen,fireEvent,cleanup,waitFor} from '@testing-library/react';
+import {act,render,screen,fireEvent,cleanup,waitFor} from '@testing-library/react';
 import {afterEach,beforeEach,describe,it,expect,vi} from 'vitest';
 import {App} from './App';
 beforeEach(()=>{localStorage.clear();sessionStorage.clear();vi.stubGlobal('matchMedia',()=>({matches:false}));vi.stubGlobal('fetch',vi.fn().mockResolvedValue({ok:false,status:401}));history.replaceState(null,'','/')});
@@ -263,4 +263,21 @@ it('uses the configured API origin for authenticated requests while keeping sess
   fireEvent.click(screen.getByRole('button',{name:'Sign out'}));await screen.findByRole('button',{name:'Discover'});
   expect(requests).toHaveBeenCalledWith('https://backend.example.test/api/auth/logout',expect.objectContaining({credentials:'include',method:'POST'}));
  } finally {vi.unstubAllEnvs();}
+});
+it.each([['yoruba','Yorùbá'],['igbo','Igbo'],['hausa','Hausa']] as const)('automatically returns with saved next-step and final-course state for %s',async(language,name)=>{
+ const {courseLessons}=await import('./lessonContent');const lessons=courseLessons(language);
+ const record=(lesson_id:string)=>({language,lesson_id,status:'completed',first_choice_score:4,completed_at:'2026-10-09',xp:10});
+ for(const final of [false,true]){
+  const before=final?lessons.slice(0,4).map(item=>record(item.id)):[];const content=lessons[final?4:0];
+  vi.stubGlobal('fetch',vi.fn().mockResolvedValueOnce({ok:true,json:async()=>({id:'u',display_name:'Learner',preferred_language:language,progress:{total_xp:before.length*10,completions:before}})}).mockResolvedValueOnce({ok:true}).mockResolvedValueOnce({ok:true,json:async()=>({total_xp:(before.length+1)*10,completions:[...before,record(content.id)]})}));
+  const view=render(<App/>);await screen.findByRole('button',{name:'My learning'});fireEvent.click(screen.getByRole('button',{name:'My learning'}));await screen.findByRole('heading',{name:`Your ${name} journey`});
+  vi.useFakeTimers();fireEvent.click(screen.getByRole('button',{name:'Continue the journey'}));
+  for(let i=0;i<4;i++){fireEvent.click(screen.getByRole('button',{name:content.exercises[i].answer}));fireEvent.click(screen.getByRole('button',{name:i===3?'Finish lesson':'Next exercise'}));}
+  await act(async()=>{await Promise.resolve();await Promise.resolve();});
+  act(()=>vi.advanceTimersByTime(4000));expect(screen.getByRole('dialog')).toBeTruthy();act(()=>vi.advanceTimersByTime(7000));expect(screen.queryByRole('dialog')).toBeNull();
+  expect(screen.getByText(`${before.length+1} of 5 available lessons complete`)).toBeTruthy();
+  if(final){expect(screen.getByText('Available lessons complete!')).toBeTruthy();expect(screen.queryByRole('button',{name:'Continue the journey'})).toBeNull();}
+  else expect(screen.getByRole('button',{name:'Everyday Greetings, current'})).toBeTruthy();
+  view.unmount();vi.useRealTimers();
+ }
 });

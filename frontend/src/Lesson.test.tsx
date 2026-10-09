@@ -1,5 +1,5 @@
 // @vitest-environment jsdom
-import {render, screen, fireEvent, cleanup, waitFor} from '@testing-library/react';
+import {act,render, screen, fireEvent, cleanup, waitFor} from '@testing-library/react';
 import {afterEach, expect, it, vi} from 'vitest';
 import {Lesson} from './Lesson';
 import {learningCourses, warmWelcome, everydayGreetings} from './lessonContent';
@@ -120,6 +120,7 @@ it.each(Object.entries(learningCourses).flatMap(([language,course])=>course.unit
  }
  await waitFor(()=>expect(save).toHaveBeenCalledWith(content.exercises.map(exercise=>exercise.options.indexOf(exercise.answer))));
  expect(screen.getByText('4 of 4 correct on your first choice. Keep practising!')).toBeTruthy();
+  expect(screen.getByTestId('lesson-celebration')).toBeTruthy();
 });
 
 it.each(Object.entries(learningCourses).flatMap(([language,course])=>course.units.flatMap(unit=>unit.lessons.map(content=>({language,content})))))(
@@ -141,4 +142,35 @@ it.each(Object.entries(learningCourses).flatMap(([language,course])=>course.unit
   });
   expect(screen.queryByRole('progressbar',{name:'Exercise progress'})).toBeNull();
   expect(screen.getByText('4 of 4 correct on your first choice. Keep practising!')).toBeTruthy();
+  expect(screen.getByTestId('lesson-celebration')).toBeTruthy();
  });
+
+it('celebrates only after Finish lesson, saves immediately and does not save again on celebration rerenders',async()=>{
+ const audio={play:vi.fn().mockResolvedValue(undefined),pause:vi.fn(),currentTime:0,volume:1};
+ vi.stubGlobal('Audio',class {constructor(){return audio}});
+ let resolveSave!:()=>void;const save=vi.fn(()=>new Promise<void>(resolve=>{resolveSave=resolve}));
+ const {rerender,unmount}=render(<Lesson content={warmWelcome} onClose={()=>{}} onComplete={save}/>);
+ for(let index=0;index<4;index++){
+  expect(screen.queryByTestId('lesson-celebration')).toBeNull();fireEvent.click(screen.getByRole('button',{name:warmWelcome.exercises[index].answer}));
+  expect(screen.queryByTestId('lesson-celebration')).toBeNull();fireEvent.click(screen.getByRole('button',{name:index===3?'Finish lesson':'Next exercise'}));
+ }
+ expect(screen.getByTestId('lesson-celebration')).toBeTruthy();expect(save).toHaveBeenCalledOnce();expect(save).toHaveBeenCalledWith([0,1,2,1]);
+ await waitFor(()=>expect(audio.play).toHaveBeenCalledOnce());expect(audio.volume).toBe(.3);expect(screen.getByRole('status').textContent).toContain('Saving completion');
+ rerender(<Lesson content={warmWelcome} onClose={()=>{}} onComplete={save}/>);expect(audio.play).toHaveBeenCalledOnce();
+ resolveSave();await waitFor(()=>expect(screen.getByRole('status').textContent).toContain('awards 10 XP once; replaying adds no XP'));
+ expect(save).toHaveBeenCalledOnce();unmount();vi.unstubAllGlobals();
+});
+
+it.each(['automatic','manual','slow-save'])('returns only after the visible saved completion screen: %s',async mode=>{
+ vi.useFakeTimers();vi.stubGlobal('Audio',class {volume=1;currentTime=0;play=vi.fn().mockResolvedValue(undefined);pause=vi.fn();});
+ let resolve!:()=>void;const close=vi.fn();const save=vi.fn(()=>mode==='slow-save'?new Promise<void>(r=>resolve=r):Promise.resolve());
+ const view=render(<Lesson content={warmWelcome} onClose={close} onComplete={save}/>);
+ for(let i=0;i<4;i++){fireEvent.click(screen.getByRole('button',{name:warmWelcome.exercises[i].answer}));fireEvent.click(screen.getByRole('button',{name:i===3?'Finish lesson':'Next exercise'}));}
+ await act(async()=>{await Promise.resolve();});
+ act(()=>vi.advanceTimersByTime(4000));expect(close).not.toHaveBeenCalled();
+ if(mode==='slow-save'){act(()=>vi.advanceTimersByTime(10000));expect(close).not.toHaveBeenCalled();await act(async()=>resolve());}
+ expect(screen.getByText('Lesson complete!')).toBeTruthy();
+ if(mode==='manual'){fireEvent.click(screen.getByRole('button',{name:'Back to my journey'}));expect(close).toHaveBeenCalledOnce();act(()=>vi.advanceTimersByTime(7000));expect(close).toHaveBeenCalledOnce();}
+ else {act(()=>vi.advanceTimersByTime(6999));expect(close).not.toHaveBeenCalled();act(()=>vi.advanceTimersByTime(1));expect(close).toHaveBeenCalledOnce();}
+ expect(save).toHaveBeenCalledOnce();view.unmount();vi.useRealTimers();vi.unstubAllGlobals();
+});

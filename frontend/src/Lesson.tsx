@@ -1,3 +1,4 @@
+import {LessonCelebration} from './LessonCelebration';
 import {useEffect, useRef, useState} from 'react';
 
 import {BookOpen, Check, X} from 'lucide-react';
@@ -11,6 +12,10 @@ import {courses, type Language} from './courses';
 
 export function Lesson({content, onClose, onComplete, language='yoruba', unitNumber=1}: {content: LessonContent; language?: Language; unitNumber?: number; onClose: () => void; onComplete?: (answers:number[]) => Promise<void>}) {
 
+  const [celebrationFinished,setCelebrationFinished]=useState(false);
+  const returnTimer=useRef<number|undefined>(undefined);
+  const closeRef=useRef(onClose);closeRef.current=onClose;
+  function returnToJourney(){window.clearTimeout(returnTimer.current);closeRef.current();}
   const [step, setStep] = useState(0);
 
   const [answer, setAnswer] = useState<string | null>(null);
@@ -40,6 +45,11 @@ export function Lesson({content, onClose, onComplete, language='yoruba', unitNum
   const complete = step === content.exercises.length;
 
   const exercise = content.exercises[step];
+  useEffect(()=>{
+    if(!complete||!celebrationFinished||saveState!=='saved')return;
+    returnTimer.current=window.setTimeout(()=>closeRef.current(),7000);
+    return()=>window.clearTimeout(returnTimer.current);
+  },[complete,celebrationFinished,saveState]);
 
   useEffect(() => {
 
@@ -59,7 +69,7 @@ export function Lesson({content, onClose, onComplete, language='yoruba', unitNum
 
   return <div className="backdrop" onKeyDown={event => {
 
-    if (event.key === 'Escape') {event.stopPropagation(); if(saveState!=='saving')onClose();}
+    if (event.key === 'Escape') {event.stopPropagation(); if(saveState!=='saving')returnToJourney();}
 
     if (event.key === 'Tab') {
 
@@ -75,11 +85,13 @@ export function Lesson({content, onClose, onComplete, language='yoruba', unitNum
 
   }}><section ref={panel} className="modal lesson-player" role="dialog" aria-modal="true" aria-labelledby="lesson-title">
 
-    <button className="icon close" disabled={saveState==='saving'} onClick={onClose} aria-label={complete&&saveState!=='saved'?'Close lesson without saving':'Close lesson'}><X/></button>
+    <button className="icon close" disabled={saveState==='saving'} onClick={returnToJourney} aria-label={complete&&saveState!=='saved'?'Close lesson without saving':'Close lesson'}><X/></button>
 
     <BookOpen aria-hidden="true"/><span className="eyebrow">{courses[language].name} · Unit {unitNumber}</span>
 
     <h2 id="lesson-title">{content.title}</h2>
+
+    {complete&&<LessonCelebration onFinished={()=>setCelebrationFinished(true)}/>}
 
     {complete ? <>
 
@@ -93,7 +105,7 @@ export function Lesson({content, onClose, onComplete, language='yoruba', unitNum
 
       {saveState==='failed'&&<button className="primary" onClick={()=>{void saveCompletion()}}>Retry saving</button>}
 
-      <button className="primary" disabled={saveState==='saving'} onClick={onClose}>{saveState==='saved'?'Back to my journey':saveState==='saving'?'Saving…':'Leave without saving'}</button>
+      <button className="primary" disabled={saveState==='saving'} onClick={returnToJourney}>{saveState==='saved'?'Back to my journey':saveState==='saving'?'Saving…':'Leave without saving'}</button>
 
     </> : <>
 
