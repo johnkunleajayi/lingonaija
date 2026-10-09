@@ -88,7 +88,7 @@ async def google_callback(request: Request, db: Session = Depends(get_db)):
         return RedirectResponse(settings.frontend_url + "/?auth_error=signin", status_code=303)
     request.session.clear()
     response = RedirectResponse(settings.frontend_url + "/?signed_in=1", status_code=303)
-    response.set_cookie(COOKIE, raw, httponly=True, secure=settings.cookie_secure, samesite="lax", max_age=settings.session_days*86400, path="/")
+    response.set_cookie(COOKIE, raw, httponly=True, secure=settings.cookie_secure, samesite=settings.session_cookie_samesite, max_age=settings.session_days*86400, path="/")
     response.headers["Cache-Control"] = "no-store"
     return response
 
@@ -108,6 +108,6 @@ def logout(request: Request, db: Session = Depends(get_db)):
         db.execute(delete(AuthSession).where(AuthSession.token_hash == digest(token)))
         db.commit()
     response = Response(status_code=204)
-    response.delete_cookie(COOKIE, path="/", secure=settings.cookie_secure, httponly=True, samesite="lax")
+    response.delete_cookie(COOKIE, path="/", secure=settings.cookie_secure, httponly=True, samesite=settings.session_cookie_samesite)
     response.headers["Cache-Control"] = "no-store"
     return response

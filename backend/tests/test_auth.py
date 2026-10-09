@@ -131,3 +131,52 @@ def test_existing_user_receives_avatar_through_successful_callback(db,monkeypatc
     assert me.status_code==200
     assert me.json()['avatar_url']==user.avatar_url
     assert me.json()['id']==str(original_id)
+
+@pytest.mark.parametrize('secure',[False,True])
+def test_session_cookie_samesite_creation_and_deletion(db,monkeypatch,secure):
+    monkeypatch.setattr(settings,'cookie_secure',secure)
+    async def verified_identity(request):
+        return {'userinfo':claims()}
+    monkeypatch.setattr(oauth.google,'authorize_access_token',verified_identity)
+    client=TestClient(app,base_url='https://testserver' if secure else 'http://testserver')
+    response=client.get('/api/auth/google/callback',follow_redirects=False)
+    cookie=response.headers['set-cookie']
+    expected='SameSite=none' if secure else 'SameSite=lax'
+    assert expected in cookie and 'HttpOnly' in cookie
+    assert ('Secure' in cookie)==secure
+    assert 'Domain=' not in cookie
+    assert client.get('/api/auth/me').status_code==200
+    assert client.post('/api/auth/logout',headers={'origin':'https://attacker.example'}).status_code==403
+    assert client.post('/api/auth/logout').status_code==403
+    logout=client.post('/api/auth/logout',headers={'origin':settings.frontend_url})
+    assert logout.status_code==204
+    assert expected in logout.headers['set-cookie']
+    assert 'HttpOnly' in logout.headers['set-cookie']
+    assert ('Secure' in logout.headers['set-cookie'])==secure
+    assert client.get('/api/auth/me').status_code==401
+
+
+def test_production_credentialed_cors_and_origin_protection(db,monkeypatch):
+    from fastapi.middleware.cors import CORSMiddleware
+    origin='https://lingonaija-frontend.vercel.app'
+    monkeypatch.setattr(settings,'frontend_url',origin)
+    monkeypatch.setattr(settings,'cookie_secure',True)
+    # Same middleware/configuration used by main.py, with production's environment value.
+    production=CORSMiddleware(app,allow_origins=[origin],allow_credentials=True,allow_methods=['GET','POST'],allow_headers=['Content-Type'])
+    client=TestClient(production,base_url='https://testserver')
+    async def verified_identity(request):
+        return {'userinfo':claims()}
+    monkeypatch.setattr(oauth.google,'authorize_access_token',verified_identity)
+    client.get('/api/auth/google/callback',follow_redirects=False)
+    response=client.get('/api/auth/me',headers={'origin':origin})
+    assert response.status_code==200
+    assert response.headers['access-control-allow-origin']==origin
+    assert response.headers['access-control-allow-credentials']=='true'
+    preflight=client.options('/api/enrollments',headers={'origin':origin,'access-control-request-method':'POST','access-control-request-headers':'content-type'})
+    assert preflight.status_code==200
+    assert preflight.headers['access-control-allow-origin']==origin
+    rejected=client.options('/api/enrollments',headers={'origin':'https://attacker.example','access-control-request-method':'POST'})
+    assert rejected.status_code==400
+    assert 'access-control-allow-origin' not in rejected.headers
+    assert client.post('/api/enrollments',json={'language':'yoruba'},headers={'origin':'https://attacker.example'}).status_code==403
+    assert client.post('/api/enrollments',json={'language':'yoruba'},headers={'origin':origin}).status_code==200

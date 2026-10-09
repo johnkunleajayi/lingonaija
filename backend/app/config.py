@@ -22,6 +22,11 @@ class Settings(BaseSettings):
     frontend_url: str = "http://127.0.0.1:5173"
     google_redirect_uri: str = "http://127.0.0.1:5173/api/auth/google/callback"
     cookie_secure: bool = False
+    @property
+    def session_cookie_samesite(self) -> str:
+        # Secure deployments can use cross-site SPA requests; local proxy stays Lax.
+        return "none" if self.cookie_secure else "lax"
+
     session_days: int = Field(default=7, ge=1, le=30)
     model_config = SettingsConfigDict(env_file=Path(__file__).resolve().parents[1] / ".env", extra="ignore")
 @lru_cache
