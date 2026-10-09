@@ -1,0 +1,44 @@
+/* Trim the asset's outer whitespace; retain the complete symbol and wordmark. */
+.app .product-logo,
+.product-header button.brand > span.product-logo {
+  display: block;
+  position: relative;
+  width: 200px;
+  aspect-ratio: 4.1 / 1;
+  flex: 0 0 auto;
+  overflow: hidden;
+  padding: 0;
+  margin: 0;
+  border-radius: 6px;
+  background: #fff;
+}
+.app .product-logo img {
+  position: absolute;
+  width: 110.25%;
+  max-width: none;
+  height: auto;
+  left: -5.07%;
+  top: -23.3%;
+  /* The symbol extends below the wordmark; remove only the tagline on its right. */
+  clip-path: polygon(0 0, 100% 0, 100% 71.5%, 31% 71.5%, 31% 100%, 0 100%);
+}
+@media (max-width: 760px) {
+  .app .product-logo,
+  .product-header button.brand > span.product-logo {width: 160px;}
+}
+@media (max-width: 360px) {
+  .product-header button.brand > span.product-logo {width: 150px;}
+}
+
+/* Follow the application's theme, including a manual toggle independent of the OS. */
+.app .product-logo .logo-dark {display: none;}
+.app.dark .product-logo .logo-light {display: none;}
+.app.dark .product-logo .logo-dark {
+  display: block;
+  /* This asset has different outer whitespace and no tagline to crop. */
+  width: 105%;
+  left: -2.5%;
+  clip-path: none;
+}
+.app.dark .product-logo,
+.app.dark .product-header button.brand > span.product-logo {background: transparent;}

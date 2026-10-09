@@ -1,0 +1,7 @@
+/* Frame Ada's approved portrait in the existing character slots. */
+img.character.character-ada {
+  object-fit: cover;
+  object-position: 50% 20%;
+  border-radius: 48% 48% 24px 24px;
+  mask-image: linear-gradient(to bottom, #000 88%, transparent 100%);
+}

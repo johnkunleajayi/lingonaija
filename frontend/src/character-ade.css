@@ -1,0 +1,8 @@
+/* Keep the existing character slots; frame only Adé's approved portrait. */
+img.character.character-ade {
+  object-fit: cover;
+  object-position: 50% 20%;
+  border-radius: 48% 48% 24px 24px;
+  /* Soften the lower edge into the surrounding card without obscuring the face. */
+  mask-image: linear-gradient(to bottom, #000 88%, transparent 100%);
+}
